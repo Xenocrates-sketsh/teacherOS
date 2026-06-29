@@ -1,0 +1,12 @@
+{
+  "$schema": "https://supabase.com/docs/guides/cli/supabase-cli.schema.json",
+  "version": "1.0.0",
+  "projectId": "",
+  "env": {
+    "ANON_KEY": "",
+    "SERVICE_ROLE_KEY": "",
+    "POSTGRES_PASSWORD": "",
+    "STRIPE_SECRET_KEY": "",
+    "STRIPE_WEBHOOK_SECRET": ""
+  }
+}
