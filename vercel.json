@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd apps/web && npx next build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": "apps/web/.next",
+  "install": {
+    "ignoreScripts": false
+  }
+}
