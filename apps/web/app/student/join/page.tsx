@@ -29,7 +29,6 @@ export default function StudentJoinPage() {
       return;
     }
 
-    // Look up the class code
     const { data: codeData, error: codeError } = await supabase
       .from("class_codes")
       .select("class_id, is_active")
@@ -48,7 +47,6 @@ export default function StudentJoinPage() {
       return;
     }
 
-    // Check if already enrolled
     const { data: existingEnrollment } = await supabase
       .from("student_classes")
       .select("student_id")
@@ -62,14 +60,12 @@ export default function StudentJoinPage() {
       return;
     }
 
-    // Get class info for success message
     const { data: classData } = await supabase
       .from("classes")
       .select("name, schools(name)")
       .eq("id", codeData.class_id)
       .single();
 
-    // Enroll in class
     const { error: enrollError } = await supabase
       .from("student_classes")
       .insert({
@@ -89,7 +85,6 @@ export default function StudentJoinPage() {
     setClassCode("");
     setLoading(false);
 
-    // Redirect to student dashboard after 2 seconds
     setTimeout(() => {
       router.push("/student");
     }, 2000);
@@ -97,31 +92,19 @@ export default function StudentJoinPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Join a Class</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Enter the class code provided by your teacher.
-        </p>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">Join a Class</h1>
+      <p className="text-gray-500 mb-6">Enter the class code from your teacher.</p>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <form className="space-y-6" onSubmit={handleJoin}>
+        <form onSubmit={handleJoin} className="space-y-4">
           <div>
-            <label
-              htmlFor="classCode"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Class Code
-            </label>
             <input
-              id="classCode"
-              name="classCode"
               type="text"
               required
               value={classCode}
               onChange={(e) => setClassCode(e.target.value.toUpperCase())}
               placeholder="e.g., ABC123"
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm text-center text-lg tracking-widest font-mono"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
@@ -137,15 +120,13 @@ export default function StudentJoinPage() {
             </div>
           )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Joining..." : "Join Class"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+          >
+            {loading ? "Joining..." : "Join Class"}
+          </button>
         </form>
       </div>
     </div>
