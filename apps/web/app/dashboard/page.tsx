@@ -13,12 +13,14 @@ import {
   BookOpen,
   Users,
   Plus,
+  Activity,
 } from "lucide-react";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState({ schools: 0, classes: 0, students: 0 });
   const [loading, setLoading] = useState(true);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -68,6 +70,15 @@ export default function DashboardPage() {
         classes: classes?.length || 0,
         students: new Set(students?.map((s) => s.student_id) || []).size,
       });
+
+      const { data: log } = await supabase
+        .from("activity_log")
+        .select("*")
+        .eq("user_id", authUser.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      setActivities(log || []);
       setLoading(false);
     };
 
@@ -178,6 +189,31 @@ export default function DashboardPage() {
           </Link>
         ))}
       </div>
+
+      {activities.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-gray-400" />
+            Recent Activity
+          </h2>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+            {activities.map((a) => (
+              <div key={a.id} className="flex items-start gap-3 px-5 py-4">
+                <div className="w-2 h-2 mt-2 rounded-full bg-primary-400 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-700 capitalize">
+                    {a.action_type.replace(/_/g, " ")}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {new Date(a.created_at).toLocaleDateString()} at{" "}
+                    {new Date(a.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

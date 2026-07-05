@@ -16,7 +16,9 @@ import {
   Menu,
   X,
   GraduationCap,
+  Bell,
 } from "lucide-react";
+import NotificationBell from "@/app/components/notifications/NotificationBell";
 
 export default function DashboardLayout({
   children,
@@ -120,6 +122,13 @@ export default function DashboardLayout({
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/dashboard/notifications"
+              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            >
+              <Bell className="w-5 h-5" />
+              Notifications
+            </Link>
           </nav>
 
           <div className="border-t border-gray-100 p-4">
@@ -169,7 +178,7 @@ export default function DashboardLayout({
                 Teacher Workspace
               </span>
             </div>
-            <div className="w-6" />
+            <NotificationBell />
           </div>
         </div>
 

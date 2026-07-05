@@ -13,7 +13,9 @@ import {
   Settings,
   LogOut,
   GraduationCap,
+  ClipboardCheck,
 } from "lucide-react";
+import NotificationBell from "@/app/components/notifications/NotificationBell";
 
 export default function StudentLayout({
   children,
@@ -71,6 +73,7 @@ export default function StudentLayout({
   const navItems = [
     { icon: Home, label: "Home", href: "/student" },
     { icon: Plus, label: "Join", href: "/student/join" },
+    { icon: ClipboardCheck, label: "Attendance", href: "/student/attendance" },
     { icon: MessageSquare, label: "Chat", href: "/student/messages" },
     { icon: Calendar, label: "Calendar", href: "/student/calendar" },
     { icon: CreditCard, label: "Card", href: "/student/card" },
@@ -100,6 +103,7 @@ export default function StudentLayout({
             </div>
 
             <div className="flex items-center gap-3">
+              <NotificationBell />
               <Link
                 href="/student/settings"
                 className="text-gray-400 hover:text-gray-600 transition-colors"

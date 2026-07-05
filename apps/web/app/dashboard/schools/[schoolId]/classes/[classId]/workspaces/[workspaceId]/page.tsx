@@ -28,6 +28,12 @@ export default function WorkspaceDetailPage() {
   const [resources, setResources] = useState<Content[]>([]);
   const [activeTab, setActiveTab] = useState<"lessons" | "homework" | "announcements" | "resources">("lessons");
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalHomework: 0,
+    totalSubmissions: 0,
+    avgScore: null as number | null,
+    submissionRate: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +79,48 @@ export default function WorkspaceDetailPage() {
       setHomework(homeworkData || []);
       setAnnouncements(announcementsData || []);
       setResources(resourcesData || []);
+
+      // Calculate stats
+      const hwIds = (homeworkData || []).map((h) => h.id);
+      let totalSubs = 0;
+      let totalScore = 0;
+      let gradedCount = 0;
+
+      if (hwIds.length > 0) {
+        const { data: subs } = await supabase
+          .from("submissions")
+          .select("id")
+          .in("homework_id", hwIds);
+
+        totalSubs = subs?.length || 0;
+
+        for (const sub of subs || []) {
+          const { data: g } = await supabase
+            .from("grades")
+            .select("score, max_score")
+            .eq("submission_id", sub.id)
+            .maybeSingle();
+          if (g) {
+            totalScore += (g.score / g.max_score) * 100;
+            gradedCount++;
+          }
+        }
+      }
+
+      const { count: studentCount } = await supabase
+        .from("student_classes")
+        .select("*", { count: "exact", head: true })
+        .eq("class_id", classId);
+
+      const totalPossible = (homeworkData?.length || 0) * (studentCount || 0);
+
+      setStats({
+        totalHomework: homeworkData?.length || 0,
+        totalSubmissions: totalSubs,
+        avgScore: gradedCount > 0 ? Math.round(totalScore / gradedCount) : null,
+        submissionRate: totalPossible > 0 ? Math.round((totalSubs / totalPossible) * 100) : 0,
+      });
+
       setLoading(false);
     };
 
@@ -112,6 +160,34 @@ export default function WorkspaceDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Stats */}
+      {stats.totalHomework > 0 && (
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
+            <p className="text-2xl font-bold text-gray-900">{stats.submissionRate}%</p>
+            <p className="text-xs text-gray-500 mt-1">Submission Rate</p>
+            <div className="mt-2 w-full bg-gray-100 rounded-full h-1.5">
+              <div className="bg-primary-500 h-1.5 rounded-full" style={{ width: `${stats.submissionRate}%` }} />
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
+            <p className="text-2xl font-bold text-gray-900">{stats.avgScore !== null ? `${stats.avgScore}%` : "—"}</p>
+            <p className="text-xs text-gray-500 mt-1">Average Score</p>
+            {stats.avgScore !== null && (
+              <div className="mt-2 w-full bg-gray-100 rounded-full h-1.5">
+                <div className={`h-1.5 rounded-full ${
+                  stats.avgScore >= 70 ? "bg-green-500" : stats.avgScore >= 50 ? "bg-yellow-500" : "bg-red-500"
+                }`} style={{ width: `${stats.avgScore}%` }} />
+              </div>
+            )}
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
+            <p className="text-2xl font-bold text-gray-900">{stats.totalHomework}</p>
+            <p className="text-xs text-gray-500 mt-1">Total Homework</p>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">

@@ -48,6 +48,13 @@ export default function NewHomeworkPage() {
       return;
     }
 
+    await supabase.from("activity_log").insert({
+      user_id: user.id,
+      action_type: "created homework",
+      target_type: "homework",
+      metadata: { title, workspace_id: workspaceId },
+    });
+
     router.push(
       `/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`
     );

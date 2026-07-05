@@ -121,6 +121,13 @@ export default function SubmissionsPage() {
       return;
     }
 
+    await supabase.from("activity_log").insert({
+      user_id: user.id,
+      action_type: "graded submission",
+      target_type: "submission",
+      metadata: { submission_id: submissionId, score: parsedScore },
+    });
+
     setSubmissions((prev) =>
       prev.map((sub) =>
         sub.id === submissionId

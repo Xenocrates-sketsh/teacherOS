@@ -46,6 +46,13 @@ export default function NewLessonPage() {
       return;
     }
 
+    await supabase.from("activity_log").insert({
+      user_id: user.id,
+      action_type: "created lesson",
+      target_type: "lesson",
+      metadata: { title, workspace_id: workspaceId },
+    });
+
     router.push(
       `/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`
     );
