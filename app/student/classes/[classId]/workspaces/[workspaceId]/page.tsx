@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getWorkspaces, getLessons, getHomeworkList, getAnnouncements } from "@/lib/store";
 
 interface Content {
   id: string;
@@ -29,53 +29,28 @@ export default function StudentWorkspacePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const workspaces = getWorkspaces();
+    const workspaceData = workspaces.find((w) => w.id === workspaceId);
 
-      // Get workspace info
-      const { data: workspaceData } = await supabase
-        .from("subject_workspaces")
-        .select("name, subject, classes(name)")
-        .eq("id", workspaceId)
-        .single();
+    const lessonsData = getLessons(workspaceId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get lessons
-      const { data: lessonsData } = await supabase
-        .from("lessons")
-        .select("id, title, content, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
+    const homeworkData = getHomeworkList(workspaceId)
+      .sort((a, b) => {
+        if (!a.due_date) return 1;
+        if (!b.due_date) return -1;
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      });
 
-      // Get homework
-      const { data: homeworkData } = await supabase
-        .from("homework")
-        .select("id, title, description, due_date, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("due_date", { ascending: true });
+    const announcementsData = getAnnouncements(workspaceId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get announcements
-      const { data: announcementsData } = await supabase
-        .from("announcements")
-        .select("id, title, content, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
-
-      // Get resources
-      const { data: resourcesData } = await supabase
-        .from("resources")
-        .select("id, title, type, file_url, link_url, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
-
-      setWorkspace(workspaceData);
-      setLessons(lessonsData || []);
-      setHomework(homeworkData || []);
-      setAnnouncements(announcementsData || []);
-      setResources(resourcesData || []);
-      setLoading(false);
-    };
-
-    fetchData();
+    setWorkspace(workspaceData);
+    setLessons(lessonsData);
+    setHomework(homeworkData);
+    setAnnouncements(announcementsData);
+    setResources([]);
+    setLoading(false);
   }, [workspaceId]);
 
   if (loading) {
@@ -100,7 +75,7 @@ export default function StudentWorkspacePage() {
           href={`/student/classes/${classId}`}
           className="text-sm text-gray-500 hover:text-gray-700"
         >
-          ← Back to {workspace?.classes?.name}
+          ← Back to Class
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mt-2">
           {workspace?.name}

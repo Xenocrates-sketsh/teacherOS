@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getAttendanceSessions, getAttendanceRecords, saveAttendanceRecord, getStudentClasses, getUsers } from "@/lib/auth";
+import { getStudentClasses as getStoreStudentClasses } from "@/lib/store";
 import { ArrowLeft, CheckCircle, XCircle, Clock, AlertTriangle, Save } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 
@@ -25,43 +26,31 @@ export default function AttendanceSessionPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, [sessionId]);
-
-  const fetchData = async () => {
-    const supabase = createClient();
-
-    const { data: sessionData } = await supabase
-      .from("attendance_sessions")
-      .select("*")
-      .eq("id", sessionId)
-      .single();
+    const sessions = getAttendanceSessions();
+    const sessionData = sessions.find((s) => s.id === sessionId);
     setSession(sessionData);
 
-    const { data: enrollments } = await supabase
-      .from("student_classes")
-      .select("student_id, users!student_classes_student_id_fkey(full_name)")
-      .eq("class_id", classId);
+    const enrollments = getStoreStudentClasses(undefined, classId);
+    const allUsers = getUsers();
 
-    const { data: existingRecords } = await supabase
-      .from("attendance_records")
-      .select("student_id, status")
-      .eq("session_id", sessionId);
-
+    const existingRecords = getAttendanceRecords(sessionId);
     const recordMap: Record<string, string> = {};
-    for (const r of existingRecords || []) {
+    for (const r of existingRecords) {
       recordMap[r.student_id] = r.status;
     }
 
-    const studentList: StudentRecord[] = (enrollments || []).map((e: any) => ({
-      student_id: e.student_id,
-      full_name: e.users?.full_name || "Unknown",
-      status: (recordMap[e.student_id] as any) || null,
-    }));
+    const studentList: StudentRecord[] = enrollments.map((e) => {
+      const u = allUsers.find((user) => user.id === e.student_id);
+      return {
+        student_id: e.student_id,
+        full_name: u?.full_name || "Unknown",
+        status: (recordMap[e.student_id] as any) || null,
+      };
+    });
 
     setStudents(studentList);
     setLoading(false);
-  };
+  }, [sessionId, classId]);
 
   const setStatus = (studentId: string, status: "present" | "absent" | "late" | "excused") => {
     setStudents((prev) =>
@@ -69,21 +58,16 @@ export default function AttendanceSessionPage() {
     );
   };
 
-  const saveAttendance = async () => {
+  const saveAttendance = () => {
     setSaving(true);
-    const supabase = createClient();
     const records = students.filter((s) => s.status);
 
     for (const record of records) {
-      const { error } = await supabase.from("attendance_records").upsert(
-        {
-          session_id: sessionId,
-          student_id: record.student_id,
-          status: record.status,
-        },
-        { onConflict: "session_id,student_id" }
-      );
-      if (error) console.error(error);
+      saveAttendanceRecord({
+        session_id: sessionId,
+        student_id: record.student_id,
+        status: record.status,
+      });
     }
 
     setSaving(false);

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSchools } from "@/lib/store";
 
 interface School {
   id: string;
@@ -15,19 +15,11 @@ export default function SchoolsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSchools = async () => {
-      const supabase = createClient();
-
-      const { data } = await supabase
-        .from("schools")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      setSchools(data || []);
-      setLoading(false);
-    };
-
-    fetchSchools();
+    const all = getSchools().sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    setSchools(all);
+    setLoading(false);
   }, []);
 
   if (loading) {

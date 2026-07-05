@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getLessons, getHomeworkList, getAnnouncements } from "@/lib/store";
 import { Search, BookOpen, ClipboardList, Megaphone, FileText, Loader2 } from "lucide-react";
 
 interface SearchResult {
   id: string;
-  type: "lesson" | "homework" | "announcement" | "resource";
+  type: "lesson" | "homework" | "announcement";
   title: string;
   content: string;
-  workspace_name: string;
-  class_name: string;
   created_at: string;
 }
 
@@ -21,7 +19,7 @@ export default function SearchPage() {
   const [searched, setSearched] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const performSearch = useCallback(async (searchQuery: string) => {
+  const performSearch = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
       setSearched(false);
@@ -31,64 +29,41 @@ export default function SearchPage() {
     setLoading(true);
     setSearched(true);
 
-    const supabase = createClient();
-    const q = `%${searchQuery}%`;
+    const q = searchQuery.toLowerCase();
 
-    const [lessons, homework, announcements, resources] = await Promise.all([
-      supabase
-        .from("lessons")
-        .select("id, title, content, created_at, subject_workspaces!inner(name, classes!inner(name))")
-        .or(`title.ilike.${q},content.ilike.${q}`),
-      supabase
-        .from("homework")
-        .select("id, title, description, created_at, subject_workspaces!inner(name, classes!inner(name))")
-        .or(`title.ilike.${q},description.ilike.${q}`),
-      supabase
-        .from("announcements")
-        .select("id, title, content, created_at, subject_workspaces!inner(name, classes!inner(name))")
-        .or(`title.ilike.${q},content.ilike.${q}`),
-      supabase
-        .from("resources")
-        .select("id, title, type, created_at, subject_workspaces!inner(name, classes!inner(name))")
-        .ilike("title", q),
-    ]);
+    const lessons = getLessons().filter(
+      (l) => l.title.toLowerCase().includes(q) || l.content.toLowerCase().includes(q)
+    );
+
+    const homework = getHomeworkList().filter(
+      (h) => h.title.toLowerCase().includes(q) || h.description.toLowerCase().includes(q)
+    );
+
+    const announcements = getAnnouncements().filter(
+      (a) => a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q)
+    );
 
     const allResults: SearchResult[] = [
-      ...(lessons.data || []).map((l: any) => ({
+      ...lessons.map((l) => ({
         id: l.id,
         type: "lesson" as const,
         title: l.title,
         content: l.content || "",
-        workspace_name: l.subject_workspaces.name,
-        class_name: l.subject_workspaces.classes.name,
         created_at: l.created_at,
       })),
-      ...(homework.data || []).map((h: any) => ({
+      ...homework.map((h) => ({
         id: h.id,
         type: "homework" as const,
         title: h.title,
         content: h.description || "",
-        workspace_name: h.subject_workspaces.name,
-        class_name: h.subject_workspaces.classes.name,
         created_at: h.created_at,
       })),
-      ...(announcements.data || []).map((a: any) => ({
+      ...announcements.map((a) => ({
         id: a.id,
         type: "announcement" as const,
         title: a.title,
         content: a.content || "",
-        workspace_name: a.subject_workspaces.name,
-        class_name: a.subject_workspaces.classes.name,
         created_at: a.created_at,
-      })),
-      ...(resources.data || []).map((r: any) => ({
-        id: r.id,
-        type: "resource" as const,
-        title: r.title,
-        content: r.type === "file" ? "File upload" : "External link",
-        workspace_name: r.subject_workspaces.name,
-        class_name: r.subject_workspaces.classes.name,
-        created_at: r.created_at,
       })),
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
@@ -169,10 +144,6 @@ export default function SearchPage() {
                       </div>
                       <p className="mt-1 text-sm text-gray-600 line-clamp-2">{result.content}</p>
                       <div className="mt-2 flex items-center text-xs text-gray-500">
-                        <span>{result.class_name}</span>
-                        <span className="mx-2">·</span>
-                        <span>{result.workspace_name}</span>
-                        <span className="mx-2">·</span>
                         <span>{new Date(result.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>

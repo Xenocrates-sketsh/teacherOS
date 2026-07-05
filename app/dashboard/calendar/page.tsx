@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getTeacherSchools, getClasses, getEvents, saveEvent } from "@/lib/store";
 import Calendar from "@/app/components/calendar/Calendar";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
@@ -35,83 +36,51 @@ export default function TeacherCalendarPage() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const session = getSession();
+    if (!session) return;
 
-      if (!user) return;
+    const teacherSchools = getTeacherSchools(session.id);
+    const schoolIds = teacherSchools.map((ts) => ts.school_id);
+    const classesList = getClasses().filter((c) => schoolIds.includes(c.school_id));
+    setClasses(classesList);
 
-      const { data: teacherSchools } = await supabase
-        .from("teacher_schools")
-        .select("school_id")
-        .eq("teacher_id", user.id);
+    const classIds = classesList.map((c) => c.id);
+    const allEvents = classIds.length > 0
+      ? getEvents().filter((e) => e.class_id && classIds.includes(e.class_id))
+      : [];
 
-      const { data: classesList } = await supabase
-        .from("classes")
-        .select("id, name, school_id")
-        .in(
-          "school_id",
-          teacherSchools?.map((ts) => ts.school_id) || []
-        );
-
-      setClasses(classesList || []);
-
-      const { data: eventsList } = await supabase
-        .from("events")
-        .select("*")
-        .in(
-          "class_id",
-          classesList?.map((c) => c.id) || []
-        );
-
-      setEvents(eventsList || []);
-      setLoading(false);
-    };
-
-    fetchData();
+    setEvents(allEvents);
+    setLoading(false);
   }, []);
 
-  const handleCreateEvent = async (e: React.FormEvent) => {
+  const handleCreateEvent = (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = getSession();
+    if (!session) return;
 
-    if (!user) return;
-
-    const { error } = await supabase.from("events").insert({
+    const evt = saveEvent({
       title: newEvent.title,
       description: newEvent.description || null,
       event_type: newEvent.event_type,
       start_time: newEvent.start_time,
       end_time: newEvent.end_time || null,
       class_id: newEvent.class_id,
-      created_by: user.id,
+      workspace_id: null,
+      created_by: session.id,
     });
 
-    if (!error) {
-      setShowCreateModal(false);
-      setNewEvent({
-        title: "",
-        description: "",
-        event_type: "other",
-        start_time: "",
-        end_time: "",
-        class_id: "",
-      });
-      // Refetch events
-      const { data: eventsList } = await supabase
-        .from("events")
-        .select("*")
-        .in(
-          "class_id",
-          classes.map((c) => c.id)
-        );
-      setEvents(eventsList || []);
-    }
+    setShowCreateModal(false);
+    setNewEvent({
+      title: "",
+      description: "",
+      event_type: "other",
+      start_time: "",
+      end_time: "",
+      class_id: "",
+    });
+
+    const classIds = classes.map((c) => c.id);
+    setEvents(getEvents().filter((e) => e.class_id && classIds.includes(e.class_id)));
   };
 
   if (loading) {

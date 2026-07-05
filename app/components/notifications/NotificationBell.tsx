@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getNotifications, markNotificationRead } from "@/lib/store";
 import { Bell, CheckCheck, X } from "lucide-react";
 import Link from "next/link";
 
@@ -22,41 +23,15 @@ export default function NotificationBell() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    const session = getSession();
+    if (!session) return;
 
-      const { data } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
+    const all = getNotifications(session.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 10);
 
-      if (data) {
-        setNotifications(data);
-        setUnreadCount(data.filter((n) => !n.is_read).length);
-      }
-    };
-
-    fetchNotifications();
-
-    const supabase = createClient();
-    const channel = supabase
-      .channel("notifications")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          const n = payload.new as Notification;
-          setNotifications((prev) => [n, ...prev]);
-          if (!n.is_read) setUnreadCount((prev) => prev + 1);
-        }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
+    setNotifications(all);
+    setUnreadCount(all.filter((n) => !n.is_read).length);
   }, []);
 
   useEffect(() => {
@@ -69,18 +44,17 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const markAsRead = async (id: string) => {
-    const supabase = createClient();
-    await supabase.from("notifications").update({ is_read: true }).eq("id", id);
+  const markAsRead = (id: string) => {
+    markNotificationRead(id);
     setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, is_read: true } : n));
     setUnreadCount((prev) => Math.max(0, prev - 1));
   };
 
-  const markAllRead = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase.from("notifications").update({ is_read: true }).eq("user_id", user.id).is("is_read", false);
+  const markAllRead = () => {
+    const session = getSession();
+    if (!session) return;
+    const unread = notifications.filter((n) => !n.is_read);
+    unread.forEach((n) => markNotificationRead(n.id));
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setUnreadCount(0);
   };

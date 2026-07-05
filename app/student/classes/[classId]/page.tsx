@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getClasses, getWorkspaces } from "@/lib/store";
 
 interface Workspace {
   id: string;
@@ -19,29 +19,15 @@ export default function StudentClassPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const classes = getClasses();
+    const classInfo = classes.find((c) => c.id === classId);
 
-      // Get class info
-      const { data: classInfo } = await supabase
-        .from("classes")
-        .select("name, schools(name)")
-        .eq("id", classId)
-        .single();
+    const workspaceData = getWorkspaces(classId)
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-      // Get workspaces
-      const { data: workspaceData } = await supabase
-        .from("subject_workspaces")
-        .select("id, name, subject")
-        .eq("class_id", classId)
-        .order("created_at", { ascending: true });
-
-      setClassData(classInfo);
-      setWorkspaces(workspaceData || []);
-      setLoading(false);
-    };
-
-    fetchData();
+    setClassData(classInfo);
+    setWorkspaces(workspaceData);
+    setLoading(false);
   }, [classId]);
 
   if (loading) {
@@ -65,7 +51,7 @@ export default function StudentClassPage() {
           {classData?.name}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          {classData?.schools?.name}
+          Class
         </p>
       </div>
 

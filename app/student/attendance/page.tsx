@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
+import { getStudentClasses, getClasses, getAttendanceSessions, getAttendanceRecords } from "@/lib/store";
 import { CheckCircle, XCircle, Clock, AlertTriangle, Calendar } from "lucide-react";
 
 interface AttendanceRecord {
@@ -16,43 +17,28 @@ export default function StudentAttendancePage() {
   const [stats, setStats] = useState({ present: 0, absent: 0, late: 0, excused: 0, total: 0 });
 
   useEffect(() => {
-    fetchRecords();
-  }, []);
+    const session = getSession();
+    if (!session) return;
 
-  const fetchRecords = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: enrollments } = await supabase
-      .from("student_classes")
-      .select("class_id, classes!inner(id, name)")
-      .eq("student_id", user.id);
+    const enrollments = getStudentClasses(session.id);
+    const allClasses = getClasses();
 
     const allRecords: AttendanceRecord[] = [];
     let present = 0, absent = 0, late = 0, excused = 0;
 
-    for (const enrollment of enrollments || []) {
-      const { data: sessions } = await supabase
-        .from("attendance_sessions")
-        .select("id, date")
-        .eq("class_id", enrollment.class_id);
+    for (const enrollment of enrollments) {
+      const cls = allClasses.find((c) => c.id === enrollment.class_id);
+      const sessions = getAttendanceSessions(enrollment.class_id);
 
-      if (!sessions) continue;
-
-      for (const session of sessions) {
-        const { data: record } = await supabase
-          .from("attendance_records")
-          .select("status")
-          .eq("session_id", session.id)
-          .eq("student_id", user.id)
-          .single();
+      for (const sessionItem of sessions) {
+        const records_list = getAttendanceRecords(sessionItem.id, session.id);
+        const record = records_list[0];
 
         if (record) {
           allRecords.push({
-            date: session.date,
+            date: sessionItem.date,
             status: record.status,
-            class_name: (enrollment.classes as any).name,
+            class_name: cls?.name || "Unknown",
           });
           if (record.status === "present") present++;
           else if (record.status === "absent") absent++;
@@ -66,7 +52,7 @@ export default function StudentAttendancePage() {
     setRecords(allRecords);
     setStats({ present, absent, late, excused, total: allRecords.length });
     setLoading(false);
-  };
+  }, []);
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading attendance...</div></div>;

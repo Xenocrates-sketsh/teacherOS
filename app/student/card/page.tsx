@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
+import { getStudentClasses, getClasses } from "@/lib/store";
 
 interface StudentData {
   full_name: string;
@@ -17,51 +18,28 @@ export default function StudentCardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const session = getSession();
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (!session) return;
 
-      if (!user) return;
+    const enrollments = getStudentClasses(session.id);
+    const allClasses = getClasses();
 
-      // Get user profile
-      const { data: profile } = await supabase
-        .from("users")
-        .select("full_name, email")
-        .eq("id", user.id)
-        .single();
+    const enrolledClass = enrollments.length > 0
+      ? allClasses.find((c) => c.id === enrollments[0].class_id)
+      : null;
 
-      // Get student profile
-      const { data: studentProfile } = await supabase
-        .from("student_profiles")
-        .select("student_id, school_id")
-        .eq("user_id", user.id)
-        .single();
+    if (session && enrolledClass) {
+      setStudentData({
+        full_name: session.full_name,
+        email: session.email,
+        student_id: session.id,
+        school_name: "School",
+        class_name: enrolledClass.name,
+      });
+    }
 
-      // Get enrolled class
-      const { data: enrollment } = await supabase
-        .from("student_classes")
-        .select("class_id, classes(name, schools(name))")
-        .eq("student_id", user.id)
-        .limit(1)
-        .single();
-
-      if (profile && studentProfile && enrollment) {
-        setStudentData({
-          full_name: profile.full_name,
-          email: profile.email,
-          student_id: studentProfile.student_id,
-          school_name: (enrollment.classes as any).schools.name,
-          class_name: (enrollment.classes as any).name,
-        });
-      }
-
-      setLoading(false);
-    };
-
-    fetchData();
+    setLoading(false);
   }, []);
 
   if (loading) {

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { Upload, X, FileText, Image, File } from "lucide-react";
 import Button from "@/app/components/ui/Button";
+import { getSession, getUsers } from "@/lib/auth";
 
 interface FileUploadProps {
   onUpload: (url: string, path: string, size: number, type: string) => void;
@@ -76,55 +77,41 @@ export default function FileUpload({
     if (file) handleFileSelect(file);
   };
 
-  const uploadWithRetry = async (
-    supabase: any,
-    bucket: string,
-    filePath: string,
-    file: File,
-    maxRetries = 2
-  ): Promise<boolean> => {
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const { error } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file, { upsert: attempt > 0 });
-
-      if (!error) return true;
-      if (attempt < maxRetries) {
-        await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-      }
-    }
-    return false;
-  };
-
   const handleUpload = async () => {
     if (!selectedFile) return;
 
     setUploading(true);
     try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
+      const session = getSession();
+      if (!session) throw new Error("Please sign in to upload files");
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) throw new Error("Please sign in to upload files");
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("Failed to read file"));
+        reader.readAsDataURL(selectedFile);
+      });
 
       const fileExt = selectedFile.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
-      const filePath = `${folder}/${user.id}/${fileName}`;
+      const filePath = `${folder}/${session.id}/${fileName}`;
 
-      const success = await uploadWithRetry(supabase, bucket, filePath, selectedFile);
+      const STORE_PREFIX = "tw_";
+      const existing = JSON.parse(localStorage.getItem(STORE_PREFIX + "files") || "[]");
+      existing.push({
+        id: filePath,
+        name: selectedFile.name,
+        path: filePath,
+        size: selectedFile.size,
+        type: selectedFile.type,
+        url: dataUrl,
+        bucket,
+        uploaded_by: session.id,
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem(STORE_PREFIX + "files", JSON.stringify(existing));
 
-      if (!success) {
-        throw new Error("Upload failed after multiple attempts. Please check your connection and try again.");
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-      onUpload(publicUrl, filePath, selectedFile.size, selectedFile.type);
+      onUpload(dataUrl, filePath, selectedFile.size, selectedFile.type);
       setSelectedFile(null);
     } catch (error: any) {
       onError?.(error.message || "Upload failed. Please try again.");

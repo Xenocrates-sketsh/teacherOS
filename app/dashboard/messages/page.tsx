@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
+import { getConversations, saveConversation, getMessages, saveMessage } from "@/lib/store";
 import ConversationList from "@/app/components/chat/ConversationList";
 import ChatView from "@/app/components/chat/ChatView";
 import Modal from "@/app/components/ui/Modal";
@@ -23,85 +24,76 @@ export default function MessagesPage() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const session = getSession();
 
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+    if (!session) {
+      router.push("/login");
+      return;
+    }
 
-      setUserId(user.id);
-      setLoading(false);
-    };
-
-    checkAuth();
+    setUserId(session.id);
+    setLoading(false);
   }, [router]);
 
-  const searchUsers = useCallback(async (query: string) => {
+  const searchUsers = useCallback((query: string) => {
     if (query.length < 2) {
       setSearchResults([]);
       return;
     }
     setSearching(true);
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("users")
-      .select("id, full_name, email, role")
-      .or(`full_name.ilike.%${query}%,email.ilike.%${query}%`)
-      .limit(10);
-    setSearchResults(data || []);
+    const allUsers = getUsers().filter(
+      (u) =>
+        u.full_name.toLowerCase().includes(query.toLowerCase()) ||
+        u.email.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 10);
+    setSearchResults(allUsers);
     setSearching(false);
   }, []);
 
-  const startConversation = async (otherUserId: string) => {
+  const startConversation = (otherUserId: string) => {
     setCreating(true);
-    const supabase = createClient();
 
-    const { data: existingMemberships } = await supabase
-      .from("conversation_members")
-      .select("conversation_id")
-      .eq("user_id", userId);
+    // Check if conversation already exists
+    const existingConvs = getConversations();
+    const existingConv = existingConvs.find((c) => {
+      const msgs = getMessages(c.id);
+      const participants = new Set(msgs.map((m) => m.sender_id));
+      participants.add(otherUserId);
+      // Check if both users have sent messages in this conversation
+      const hasUser1 = msgs.some((m) => m.sender_id === userId);
+      const hasUser2 = msgs.some((m) => m.sender_id === otherUserId);
+      return c.type === "direct" && participants.size <= 2 && (hasUser1 || hasUser2);
+    });
 
-    const convIds = existingMemberships?.map((m) => m.conversation_id) || [];
-
-    if (convIds.length > 0) {
-      const { data: otherMemberships } = await supabase
-        .from("conversation_members")
-        .select("conversation_id")
-        .in("conversation_id", convIds)
-        .eq("user_id", otherUserId);
-
-      if (otherMemberships && otherMemberships.length > 0) {
-        setShowNewModal(false);
-        setCreating(false);
-        setUserSearch("");
-        setSearchResults([]);
-        router.push(`/dashboard/messages/${otherMemberships[0].conversation_id}`);
-        return;
-      }
-    }
-
-    const { data: newConv } = await supabase
-      .from("conversations")
-      .insert({ type: "direct" })
-      .select()
-      .single();
-
-    if (newConv) {
-      await supabase.from("conversation_members").insert([
-        { conversation_id: newConv.id, user_id: userId },
-        { conversation_id: newConv.id, user_id: otherUserId },
-      ]);
+    if (existingConv) {
       setShowNewModal(false);
       setCreating(false);
       setUserSearch("");
       setSearchResults([]);
-      router.push(`/dashboard/messages/${newConv.id}`);
+      router.push(`/dashboard/messages/${existingConv.id}`);
+      return;
     }
+
+    const newConv = saveConversation({
+      name: null,
+      type: "direct",
+      class_id: null,
+      workspace_id: null,
+    });
+
+    // Save a system message to link both users
+    saveMessage({
+      conversation_id: newConv.id,
+      sender_id: userId!,
+      content: "Conversation started",
+      read_at: null,
+    });
+
+    setShowNewModal(false);
+    setCreating(false);
+    setUserSearch("");
+    setSearchResults([]);
+    router.push(`/dashboard/messages/${newConv.id}`);
   };
 
   if (loading || !userId) {

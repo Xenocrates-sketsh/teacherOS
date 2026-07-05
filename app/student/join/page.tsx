@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getClassCodes, getClasses, enrollStudent, getStudentClasses } from "@/lib/store";
 
 export default function StudentJoinPage() {
   const router = useRouter();
@@ -11,31 +12,26 @@ export default function StudentJoinPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleJoin = async (e: React.FormEvent) => {
+  const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
     }
 
-    const { data: codeData, error: codeError } = await supabase
-      .from("class_codes")
-      .select("class_id, is_active")
-      .eq("code", classCode.toUpperCase())
-      .single();
+    const allCodes = getClassCodes();
+    const codeData = allCodes.find(
+      (c) => c.code === classCode.toUpperCase()
+    );
 
-    if (codeError || !codeData) {
+    if (!codeData) {
       setError("Invalid class code");
       setLoading(false);
       return;
@@ -47,40 +43,20 @@ export default function StudentJoinPage() {
       return;
     }
 
-    const { data: existingEnrollment } = await supabase
-      .from("student_classes")
-      .select("student_id")
-      .eq("student_id", user.id)
-      .eq("class_id", codeData.class_id)
-      .single();
-
-    if (existingEnrollment) {
+    const existingEnrollment = getStudentClasses(session.id, codeData.class_id);
+    if (existingEnrollment.length > 0) {
       setError("You are already enrolled in this class");
       setLoading(false);
       return;
     }
 
-    const { data: classData } = await supabase
-      .from("classes")
-      .select("name, schools(name)")
-      .eq("id", codeData.class_id)
-      .single();
+    const classes = getClasses();
+    const classData = classes.find((c) => c.id === codeData.class_id);
 
-    const { error: enrollError } = await supabase
-      .from("student_classes")
-      .insert({
-        student_id: user.id,
-        class_id: codeData.class_id,
-      });
-
-    if (enrollError) {
-      setError("Failed to enroll in class");
-      setLoading(false);
-      return;
-    }
+    enrollStudent(session.id, codeData.class_id);
 
     setSuccess(
-      `Successfully joined ${classData?.schools?.name} - ${classData?.name}!`
+      `Successfully joined ${classData?.name}!`
     );
     setClassCode("");
     setLoading(false);

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
+import { getMessages, saveMessage } from "@/lib/store";
 import Avatar from "@/app/components/ui/Avatar";
 import MessageInput from "./MessageInput";
 
@@ -28,96 +29,59 @@ export default function ChatView({ conversationId, userId }: ChatViewProps) {
   };
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const supabase = createClient();
+    const allMessages = getMessages(conversationId)
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-      const { data: msgs } = await supabase
-        .from("messages")
-        .select("*, users!messages_sender_id_fkey(full_name)")
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true });
+    const allUsers = getUsers();
+    const formattedMessages = allMessages.map((msg) => ({
+      id: msg.id,
+      sender_id: msg.sender_id,
+      content: msg.content,
+      created_at: msg.created_at,
+      sender_name: allUsers.find((u) => u.id === msg.sender_id)?.full_name || "Unknown",
+    }));
 
-      const formattedMessages =
-        msgs?.map((msg) => ({
-          id: msg.id,
-          sender_id: msg.sender_id,
-          content: msg.content,
-          created_at: msg.created_at,
-          sender_name: msg.users?.full_name || "Unknown",
-        })) || [];
+    setMessages(formattedMessages);
+    setLoading(false);
 
-      setMessages(formattedMessages);
-      setLoading(false);
-
-      await supabase
-        .from("messages")
-        .update({ read_at: new Date().toISOString() })
-        .eq("conversation_id", conversationId)
-        .neq("sender_id", userId)
-        .is("read_at", null);
-    };
-
-    fetchMessages();
-  }, [conversationId, userId]);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    const channel = supabase
-      .channel(`messages:${conversationId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        async (payload) => {
-          const { data: sender } = await supabase
-            .from("users")
-            .select("full_name")
-            .eq("id", payload.new.sender_id)
-            .single();
-
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: payload.new.id,
-              sender_id: payload.new.sender_id,
-              content: payload.new.content,
-              created_at: payload.new.created_at,
-              sender_name: sender?.full_name || "Unknown",
-            },
-          ]);
-
-          if (payload.new.sender_id !== userId) {
-            await supabase
-              .from("messages")
-              .update({ read_at: new Date().toISOString() })
-              .eq("id", payload.new.id);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Mark messages as read
+    const STORE_PREFIX = "tw_";
+    const raw = getMessages(conversationId);
+    const updated = raw.map((msg) => {
+      if (msg.sender_id !== userId && !msg.read_at) {
+        return { ...msg, read_at: new Date().toISOString() };
+      }
+      return msg;
+    });
+    localStorage.setItem(STORE_PREFIX + "messages", JSON.stringify(
+      getMessages().map((m) => {
+        const updatedMsg = updated.find((u) => u.id === m.id);
+        return updatedMsg || m;
+      })
+    ));
   }, [conversationId, userId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async (content: string) => {
-    const supabase = createClient();
-
-    await supabase.from("messages").insert({
+  const handleSend = (content: string) => {
+    saveMessage({
       conversation_id: conversationId,
       sender_id: userId,
       content,
+      read_at: null,
     });
+
+    const allUsers = getUsers();
+    const newMsg: Message = {
+      id: `msg-${Date.now()}`,
+      sender_id: userId,
+      content,
+      created_at: new Date().toISOString(),
+      sender_name: allUsers.find((u) => u.id === userId)?.full_name || "Unknown",
+    };
+    setMessages((prev) => [...prev, newMsg]);
   };
 
   if (loading) {

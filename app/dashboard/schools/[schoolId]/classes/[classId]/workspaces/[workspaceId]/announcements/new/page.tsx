@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { saveAnnouncement } from "@/lib/store";
 
 export default function NewAnnouncementPage() {
   const router = useRouter();
@@ -16,37 +17,25 @@ export default function NewAnnouncementPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
     }
 
-    const { error: announcementError } = await supabase
-      .from("announcements")
-      .insert({
-        title: title,
-        content: content,
-        workspace_id: workspaceId,
-        created_by: user.id,
-      });
-
-    if (announcementError) {
-      setError("Failed to create announcement");
-      setLoading(false);
-      return;
-    }
+    saveAnnouncement({
+      title: title,
+      content: content,
+      workspace_id: workspaceId,
+      created_by: session.id,
+    });
 
     router.push(
       `/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`

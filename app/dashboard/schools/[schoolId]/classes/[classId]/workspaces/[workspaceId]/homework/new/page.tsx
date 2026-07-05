@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { saveHomework } from "@/lib/store";
 
 export default function NewHomeworkPage() {
   const router = useRouter();
@@ -17,42 +18,25 @@ export default function NewHomeworkPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
     }
 
-    const { error: homeworkError } = await supabase.from("homework").insert({
+    saveHomework({
       title: title,
       description: description,
       due_date: dueDate || null,
       workspace_id: workspaceId,
-      created_by: user.id,
-    });
-
-    if (homeworkError) {
-      setError("Failed to create homework");
-      setLoading(false);
-      return;
-    }
-
-    await supabase.from("activity_log").insert({
-      user_id: user.id,
-      action_type: "created homework",
-      target_type: "homework",
-      metadata: { title, workspace_id: workspaceId },
+      created_by: session.id,
     });
 
     router.push(

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getStudentClasses, getClasses } from "@/lib/store";
 import {
   BookOpen,
   MessageSquare,
@@ -20,43 +21,22 @@ export default function StudentPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
+    const session = getSession();
 
-      if (!authUser) {
-        window.location.href = "/login";
-        return;
-      }
+    if (!session || session.role !== "student") {
+      window.location.href = "/login";
+      return;
+    }
 
-      const { data: profile } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", authUser.id)
-        .single();
+    const enrollments = getStudentClasses(session.id);
+    const allClasses = getClasses();
+    const enrolled = enrollments
+      .map((e) => allClasses.find((c) => c.id === e.class_id))
+      .filter((c): c is any => c && !c.archived);
 
-      if (!profile || profile.role !== "student") {
-        window.location.href = "/login";
-        return;
-      }
-
-      const { data: enrollments } = await supabase
-        .from("student_classes")
-        .select("class_id, classes(*)")
-        .eq("student_id", authUser.id);
-
-      setUser(profile);
-      setEnrolledClasses(
-        (enrollments || [])
-          .map((e) => e.classes)
-          .filter((c: any) => c && !c.archived) || []
-      );
-      setLoading(false);
-    };
-
-    checkAuth();
+    setUser(session);
+    setEnrolledClasses(enrolled);
+    setLoading(false);
   }, []);
 
   if (loading) {

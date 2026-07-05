@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getSubmissions, saveSubmission, getGrades, saveGrade, getUsers } from "@/lib/auth";
+import { getSubmissions as getStoreSubmissions, getGrades as getStoreGrades, saveGrade as saveStoreGrade } from "@/lib/store";
 import { ArrowLeft, Download, FileText, CheckCircle, Clock } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
@@ -37,52 +39,36 @@ export default function SubmissionsPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
-      const supabase = createClient();
+    const subs = getStoreSubmissions(homeworkId);
+    const allUsers = getUsers();
 
-      const { data: subs } = await supabase
-        .from("submissions")
-        .select("*, users!submissions_student_id_fkey(full_name)")
-        .eq("homework_id", homeworkId);
+    const submissionData: Submission[] = subs.map((sub) => {
+      const grades = getStoreGrades(sub.id);
+      const grade = grades[0];
+      const u = allUsers.find((user) => user.id === sub.student_id);
+      return {
+        id: sub.id,
+        student_id: sub.student_id,
+        student_name: u?.full_name || "Unknown",
+        content: sub.content,
+        file_url: sub.file_url,
+        submitted_at: sub.submitted_at,
+        grade_id: grade?.id || null,
+        score: grade?.score || null,
+        max_score: grade?.max_score || 100,
+        feedback: grade?.feedback || null,
+      };
+    });
 
-      const submissionData: Submission[] = [];
-
-      for (const sub of subs || []) {
-        const { data: grade } = await supabase
-          .from("grades")
-          .select("id, score, max_score, feedback")
-          .eq("submission_id", sub.id)
-          .single();
-
-        submissionData.push({
-          id: sub.id,
-          student_id: sub.student_id,
-          student_name: sub.users?.full_name || "Unknown",
-          content: sub.content,
-          file_url: sub.file_url,
-          submitted_at: sub.submitted_at,
-          grade_id: grade?.id || null,
-          score: grade?.score || null,
-          max_score: grade?.max_score || 100,
-          feedback: grade?.feedback || null,
-        });
-      }
-
-      setSubmissions(submissionData);
-      setLoading(false);
-    };
-
-    fetchSubmissions();
+    setSubmissions(submissionData);
+    setLoading(false);
   }, [homeworkId]);
 
-  const handleGrade = async (submissionId: string) => {
+  const handleGrade = (submissionId: string) => {
     setSaving(submissionId);
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = getSession();
 
-    if (!user) {
+    if (!session) {
       setSaving(null);
       return;
     }
@@ -93,40 +79,28 @@ export default function SubmissionsPage() {
       return;
     }
 
-    const { data: existingGrade } = await supabase
-      .from("grades")
-      .select("id")
-      .eq("submission_id", submissionId)
-      .maybeSingle();
+    const grades = getStoreGrades(submissionId);
+    const existingGrade = grades[0];
 
-    const { error } = existingGrade
-      ? await supabase
-          .from("grades")
-          .update({
-            score: parsedScore,
-            feedback,
-            graded_at: new Date().toISOString(),
-          })
-          .eq("id", existingGrade.id)
-      : await supabase.from("grades").insert({
-          submission_id: submissionId,
-          teacher_id: user.id,
-          score: parsedScore,
-          max_score: 100,
-          feedback,
-        });
-
-    if (error) {
-      setSaving(null);
-      return;
+    if (existingGrade) {
+      const STORE_PREFIX = "tw_";
+      const allGrades = getStoreGrades();
+      const idx = allGrades.findIndex((g) => g.id === existingGrade.id);
+      if (idx !== -1) {
+        allGrades[idx].score = parsedScore;
+        allGrades[idx].feedback = feedback;
+        allGrades[idx].graded_at = new Date().toISOString();
+        localStorage.setItem(STORE_PREFIX + "grades", JSON.stringify(allGrades));
+      }
+    } else {
+      saveStoreGrade({
+        submission_id: submissionId,
+        teacher_id: session.id,
+        score: parsedScore,
+        max_score: 100,
+        feedback,
+      });
     }
-
-    await supabase.from("activity_log").insert({
-      user_id: user.id,
-      action_type: "graded submission",
-      target_type: "submission",
-      metadata: { submission_id: submissionId, score: parsedScore },
-    });
 
     setSubmissions((prev) =>
       prev.map((sub) =>

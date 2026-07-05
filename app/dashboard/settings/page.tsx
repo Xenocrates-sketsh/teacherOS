@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
 
 export default function SettingsPage() {
   const [fullName, setFullName] = useState("");
@@ -14,30 +14,12 @@ export default function SettingsPage() {
   } | null>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const supabase = createClient();
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from("users")
-        .select("full_name, email")
-        .eq("id", user.id)
-        .single();
-
-      if (profile) {
-        setFullName(profile.full_name);
-        setEmail(profile.email);
-      }
-
-      setLoading(false);
-    };
-
-    fetchProfile();
+    const session = getSession();
+    if (session) {
+      setFullName(session.full_name);
+      setEmail(session.email);
+    }
+    setLoading(false);
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -45,29 +27,21 @@ export default function SettingsPage() {
     setSaving(true);
     setMessage(null);
 
-    const supabase = createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    const session = getSession();
+    if (!session) {
       setMessage({ type: "error", text: "Not authenticated" });
       setSaving(false);
       return;
     }
 
-    const { error } = await supabase
-      .from("users")
-      .update({ full_name: fullName })
-      .eq("id", user.id);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to update profile" });
-    } else {
-      setMessage({ type: "success", text: "Profile updated successfully" });
+    const users = getUsers();
+    const idx = users.findIndex((u) => u.id === session.id);
+    if (idx !== -1) {
+      users[idx].full_name = fullName;
+      localStorage.setItem("tw_users", JSON.stringify(users));
     }
 
+    setMessage({ type: "success", text: "Profile updated successfully" });
     setSaving(false);
   };
 
@@ -75,8 +49,6 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
-
-    const supabase = createClient();
 
     const form = e.target as HTMLFormElement;
     const newPassword = form.newPassword.value;
@@ -97,17 +69,18 @@ export default function SettingsPage() {
       return;
     }
 
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to update password" });
-    } else {
-      setMessage({ type: "success", text: "Password updated successfully" });
-      form.reset();
+    const session = getSession();
+    if (session) {
+      const users = getUsers();
+      const idx = users.findIndex((u) => u.id === session.id);
+      if (idx !== -1) {
+        users[idx].password = newPassword;
+        localStorage.setItem("tw_users", JSON.stringify(users));
+      }
     }
 
+    setMessage({ type: "success", text: "Password updated successfully" });
+    form.reset();
     setSaving(false);
   };
 

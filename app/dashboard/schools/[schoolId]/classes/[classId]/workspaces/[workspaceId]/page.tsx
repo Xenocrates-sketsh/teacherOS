@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getWorkspaces, getLessons, getHomeworkList, getAnnouncements, getSubmissions, getGrades, getStudentClasses } from "@/lib/store";
 import GradeDistribution from "@/app/components/charts/GradeDistribution";
 
 interface Content {
@@ -37,96 +37,63 @@ export default function WorkspaceDetailPage() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const workspaces = getWorkspaces();
+    const workspaceData = workspaces.find((w) => w.id === workspaceId);
 
-      // Get workspace info
-      const { data: workspaceData } = await supabase
-        .from("subject_workspaces")
-        .select("name, subject")
-        .eq("id", workspaceId)
-        .single();
+    const lessonsData = getLessons(workspaceId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get lessons
-      const { data: lessonsData } = await supabase
-        .from("lessons")
-        .select("id, title, content, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
+    const homeworkData = getHomeworkList(workspaceId)
+      .sort((a, b) => {
+        if (!a.due_date) return 1;
+        if (!b.due_date) return -1;
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      });
 
-      // Get homework
-      const { data: homeworkData } = await supabase
-        .from("homework")
-        .select("id, title, description, due_date, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("due_date", { ascending: true });
+    const announcementsData = getAnnouncements(workspaceId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get announcements
-      const { data: announcementsData } = await supabase
-        .from("announcements")
-        .select("id, title, content, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
+    setWorkspace(workspaceData);
+    setLessons(lessonsData);
+    setHomework(homeworkData);
+    setAnnouncements(announcementsData);
+    setResources([]);
 
-      // Get resources
-      const { data: resourcesData } = await supabase
-        .from("resources")
-        .select("id, title, type, file_url, link_url, created_at")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false });
+    // Calculate stats
+    const hwIds = homeworkData.map((h) => h.id);
+    let totalSubs = 0;
+    let totalScore = 0;
+    let gradedCount = 0;
 
-      setWorkspace(workspaceData);
-      setLessons(lessonsData || []);
-      setHomework(homeworkData || []);
-      setAnnouncements(announcementsData || []);
-      setResources(resourcesData || []);
+    if (hwIds.length > 0) {
+      for (const hwId of hwIds) {
+        const subs = getSubmissions(hwId);
+        totalSubs += subs.length;
 
-      // Calculate stats
-      const hwIds = (homeworkData || []).map((h) => h.id);
-      let totalSubs = 0;
-      let totalScore = 0;
-      let gradedCount = 0;
-
-      if (hwIds.length > 0) {
-        const { data: subs } = await supabase
-          .from("submissions")
-          .select("id")
-          .in("homework_id", hwIds);
-
-        totalSubs = subs?.length || 0;
-
-        for (const sub of subs || []) {
-          const { data: g } = await supabase
-            .from("grades")
-            .select("score, max_score")
-            .eq("submission_id", sub.id)
-            .maybeSingle();
-          if (g) {
-            totalScore += (g.score / g.max_score) * 100;
+        for (const sub of subs) {
+          const g = getGrades(sub.id);
+          const grade = g[0];
+          if (grade) {
+            totalScore += (grade.score / grade.max_score) * 100;
             gradedCount++;
           }
         }
       }
+    }
 
-      const { count: studentCount } = await supabase
-        .from("student_classes")
-        .select("*", { count: "exact", head: true })
-        .eq("class_id", classId);
+    const enrollments = getStudentClasses(undefined, classId);
+    const studentCount = enrollments.length;
+    const totalPossible = homeworkData.length * studentCount;
 
-      const totalPossible = (homeworkData?.length || 0) * (studentCount || 0);
+    setStats({
+      totalHomework: homeworkData.length,
+      totalSubmissions: totalSubs,
+      avgScore: gradedCount > 0 ? Math.round(totalScore / gradedCount) : null,
+      submissionRate: totalPossible > 0 ? Math.round((totalSubs / totalPossible) * 100) : 0,
+    });
 
-      setStats({
-        totalHomework: homeworkData?.length || 0,
-        totalSubmissions: totalSubs,
-        avgScore: gradedCount > 0 ? Math.round(totalScore / gradedCount) : null,
-        submissionRate: totalPossible > 0 ? Math.round((totalSubs / totalPossible) * 100) : 0,
-      });
-
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [workspaceId]);
+    setLoading(false);
+  }, [workspaceId, classId]);
 
   if (loading) {
     return (

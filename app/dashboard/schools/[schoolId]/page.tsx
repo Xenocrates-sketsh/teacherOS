@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSchools, getClasses } from "@/lib/store";
 
 interface Class {
   id: string;
@@ -19,30 +19,16 @@ export default function SchoolDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const schools = getSchools();
+    const schoolData = schools.find((s) => s.id === schoolId);
 
-      // Get school info
-      const { data: schoolData } = await supabase
-        .from("schools")
-        .select("*")
-        .eq("id", schoolId)
-        .single();
+    const classesData = getClasses(schoolId)
+      .filter((c) => !c.archived)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get classes
-      const { data: classesData } = await supabase
-        .from("classes")
-        .select("*")
-        .eq("school_id", schoolId)
-        .eq("archived", false)
-        .order("created_at", { ascending: false });
-
-      setSchool(schoolData);
-      setClasses(classesData || []);
-      setLoading(false);
-    };
-
-    fetchData();
+    setSchool(schoolData);
+    setClasses(classesData);
+    setLoading(false);
   }, [schoolId]);
 
   if (loading) {

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSchools, getTeacherSchools, getUsers } from "@/lib/auth";
+import { getSchools as getStoreSchools } from "@/lib/store";
 
 interface Teacher {
   id: string;
@@ -26,82 +27,50 @@ export default function SchoolSettingsPage() {
   } | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const schools = getStoreSchools();
+    const school = schools.find((s) => s.id === schoolId);
+    if (school) setSchoolName(school.name);
 
-      // Get school info
-      const { data: school } = await supabase
-        .from("schools")
-        .select("name")
-        .eq("id", schoolId)
-        .single();
-
-      if (school) {
-        setSchoolName(school.name);
-      }
-
-      // Get teachers in this school
-      const { data: members } = await supabase
-        .from("teacher_schools")
-        .select("teacher_id, role, users(id, full_name, email)")
-        .eq("school_id", schoolId);
-
-      if (members) {
-        setTeachers(
-          members.map((m: any) => ({
-            id: m.users.id,
-            full_name: m.users.full_name,
-            email: m.users.email,
-            role: m.role,
-          }))
-        );
-      }
-
-      setLoading(false);
-    };
-
-    fetchData();
+    const members = getTeacherSchools(schoolId);
+    const allUsers = getUsers();
+    const teacherList = members.map((m) => {
+      const u = allUsers.find((u) => u.id === m.teacher_id);
+      return {
+        id: m.teacher_id,
+        full_name: u?.full_name || "Unknown",
+        email: u?.email || "",
+        role: m.role,
+      };
+    });
+    setTeachers(teacherList);
+    setLoading(false);
   }, [schoolId]);
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
 
-    const supabase = createClient();
-
-    const { error } = await supabase
-      .from("schools")
-      .update({ name: schoolName })
-      .eq("id", schoolId);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to update school" });
-    } else {
-      setMessage({ type: "success", text: "School updated successfully" });
+    const schools = getStoreSchools();
+    const idx = schools.findIndex((s) => s.id === schoolId);
+    if (idx !== -1) {
+      schools[idx].name = schoolName;
+      const STORE_PREFIX = "tw_";
+      localStorage.setItem(STORE_PREFIX + "schools", JSON.stringify(schools));
     }
 
+    setMessage({ type: "success", text: "School updated successfully" });
     setSaving(false);
   };
 
-  const handleDelete = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this school? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+  const handleDelete = () => {
+    if (!confirm("Are you sure you want to delete this school? This action cannot be undone.")) return;
 
-    const supabase = createClient();
-
-    const { error } = await supabase.from("schools").delete().eq("id", schoolId);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to delete school" });
-    } else {
-      router.push("/dashboard/schools");
-    }
+    const schools = getStoreSchools();
+    const filtered = schools.filter((s) => s.id !== schoolId);
+    const STORE_PREFIX = "tw_";
+    localStorage.setItem(STORE_PREFIX + "schools", JSON.stringify(filtered));
+    router.push("/dashboard/schools");
   };
 
   if (loading) {

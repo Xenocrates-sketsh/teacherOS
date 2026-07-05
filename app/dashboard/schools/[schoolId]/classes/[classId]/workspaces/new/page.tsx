@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { saveWorkspace } from "@/lib/store";
 
 export default function NewWorkspacePage() {
   const router = useRouter();
@@ -15,28 +15,16 @@ export default function NewWorkspacePage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-
-    const { data: workspace, error: workspaceError } = await supabase
-      .from("subject_workspaces")
-      .insert({
-        name: name,
-        subject: subject,
-        class_id: classId,
-      })
-      .select()
-      .single();
-
-    if (workspaceError) {
-      setError("Failed to create workspace");
-      setLoading(false);
-      return;
-    }
+    const workspace = saveWorkspace({
+      name: name,
+      subject: subject,
+      class_id: classId,
+    });
 
     router.push(
       `/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspace.id}`

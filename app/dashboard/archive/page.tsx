@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSchools, getClasses, updateClass } from "@/lib/store";
 import { Archive, RotateCcw } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 
@@ -21,47 +21,25 @@ export default function ArchivePage() {
   const [toggling, setToggling] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchClasses();
+    const schools = getSchools();
+    const allClasses = getClasses();
+
+    setClasses(
+      allClasses.map((c) => ({
+        id: c.id,
+        name: c.name,
+        school_name: schools.find((s) => s.id === c.school_id)?.name || "Unknown",
+        school_id: c.school_id,
+        archived: c.archived || false,
+        created_at: c.created_at,
+      })).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    );
+    setLoading(false);
   }, []);
 
-  const fetchClasses = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: schools } = await supabase
-      .from("schools")
-      .select("id, name");
-
-    if (schools && schools.length > 0) {
-      const schoolIds = schools.map((s) => s.id);
-      const { data: classesData } = await supabase
-        .from("classes")
-        .select("id, name, school_id, archived, created_at")
-        .in("school_id", schoolIds)
-        .order("created_at", { ascending: false });
-
-      setClasses(
-        (classesData || []).map((c) => ({
-          id: c.id,
-          name: c.name,
-          school_name: schools.find((s) => s.id === c.school_id)?.name || "Unknown",
-          school_id: c.school_id,
-          archived: c.archived || false,
-          created_at: c.created_at,
-        }))
-      );
-    }
-    setLoading(false);
-  };
-
-  const toggleArchive = async (classId: string, currentArchived: boolean) => {
+  const toggleArchive = (classId: string, currentArchived: boolean) => {
     setToggling(classId);
-    const supabase = createClient();
-    await supabase
-      .from("classes")
-      .update({ archived: !currentArchived })
-      .eq("id", classId);
+    updateClass(classId, { archived: !currentArchived });
     setClasses((prev) =>
       prev.map((c) =>
         c.id === classId ? { ...c, archived: !currentArchived } : c

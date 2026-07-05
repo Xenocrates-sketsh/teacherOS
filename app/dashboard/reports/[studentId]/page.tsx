@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getUsers } from "@/lib/auth";
+import { getStudentClasses, getWorkspaces, getHomeworkList, getSubmissions, getGrades } from "@/lib/store";
 import { ArrowLeft, Printer } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 
@@ -32,73 +33,42 @@ export default function StudentReportPage() {
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchData();
-  }, [studentId]);
-
-  const fetchData = async () => {
-    const supabase = createClient();
-
-    const { data: profile } = await supabase
-      .from("users")
-      .select("full_name, email")
-      .eq("id", studentId)
-      .single();
-
-    const { data: stuProfile } = await supabase
-      .from("student_profiles")
-      .select("student_id")
-      .eq("user_id", studentId)
-      .single();
+    const allUsers = getUsers();
+    const profile = allUsers.find((u) => u.id === studentId);
 
     setStudent({
       full_name: profile?.full_name || "Unknown",
       email: profile?.email || "",
-      student_id: (stuProfile as any)?.student_id || "N/A",
+      student_id: studentId,
     });
 
-    const { data: enrollments } = await supabase
-      .from("student_classes")
-      .select("class_id, classes(name)")
-      .eq("student_id", studentId);
+    const enrollments = getStudentClasses(studentId);
 
     const allGrades: GradeItem[] = [];
 
-    for (const enrollment of enrollments || []) {
-      const { data: workspaces } = await supabase
-        .from("subject_workspaces")
-        .select("id, name")
-        .eq("class_id", enrollment.class_id);
+    for (const enrollment of enrollments) {
+      const workspaces = getWorkspaces(enrollment.class_id);
 
-      for (const ws of workspaces || []) {
-        const { data: homework } = await supabase
-          .from("homework")
-          .select("id, title")
-          .eq("workspace_id", ws.id);
+      for (const ws of workspaces) {
+        const homework = getHomeworkList(ws.id);
 
-        for (const hw of homework || []) {
-          const { data: submission } = await supabase
-            .from("submissions")
-            .select("id")
-            .eq("homework_id", hw.id)
-            .eq("student_id", studentId)
-            .maybeSingle();
+        for (const hw of homework) {
+          const subs = getSubmissions(hw.id, studentId);
+          const submission = subs[0];
 
           let score = null, maxScore = 100, graded = false;
           if (submission) {
-            const { data: g } = await supabase
-              .from("grades")
-              .select("score, max_score")
-              .eq("submission_id", submission.id)
-              .maybeSingle();
-            if (g) {
-              score = g.score;
-              maxScore = g.max_score;
+            const g = getGrades(submission.id);
+            const grade = g[0];
+            if (grade) {
+              score = grade.score;
+              maxScore = grade.max_score;
               graded = true;
             }
           }
 
           allGrades.push({
-            class_name: (enrollment.classes as any).name,
+            class_name: enrollment.class_id,
             workspace_name: ws.name,
             homework_title: hw.title,
             score,
@@ -112,7 +82,7 @@ export default function StudentReportPage() {
 
     setGrades(allGrades);
     setLoading(false);
-  };
+  }, [studentId]);
 
   const handlePrint = () => {
     window.print();

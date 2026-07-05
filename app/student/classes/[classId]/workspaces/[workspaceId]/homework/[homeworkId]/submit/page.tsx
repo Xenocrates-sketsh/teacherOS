@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getHomeworkList, getSubmissions, saveSubmission } from "@/lib/store";
 import { ArrowLeft, Upload, CheckCircle } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 import FileUpload from "@/app/components/files/FileUpload";
@@ -11,7 +12,6 @@ import FileUpload from "@/app/components/files/FileUpload";
 export default function SubmitHomeworkPage() {
   const params = useParams();
   const router = useRouter();
-  const schoolId = params.schoolId as string;
   const classId = params.classId as string;
   const workspaceId = params.workspaceId as string;
   const homeworkId = params.homeworkId as string;
@@ -24,37 +24,19 @@ export default function SubmitHomeworkPage() {
   const [existingSubmission, setExistingSubmission] = useState<any>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const allHomework = getHomeworkList();
+    const hw = allHomework.find((h) => h.id === homeworkId);
+    setHomework(hw);
 
-      const { data: hw } = await supabase
-        .from("homework")
-        .select("*")
-        .eq("id", homeworkId)
-        .single();
-
-      setHomework(hw);
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: sub } = await supabase
-          .from("submissions")
-          .select("*")
-          .eq("homework_id", homeworkId)
-          .eq("student_id", user.id)
-          .single();
-
-        if (sub) {
-          setExistingSubmission(sub);
-          setContent(sub.content || "");
-        }
+    const session = getSession();
+    if (session) {
+      const subs = getSubmissions(homeworkId, session.id);
+      const sub = subs[0];
+      if (sub) {
+        setExistingSubmission(sub);
+        setContent(sub.content || "");
       }
-    };
-
-    fetchData();
+    }
   }, [homeworkId]);
 
   const handleFileUpload = (
@@ -68,17 +50,14 @@ export default function SubmitHomeworkPage() {
     setError(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = getSession();
 
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
@@ -91,35 +70,22 @@ export default function SubmitHomeworkPage() {
     }
 
     if (existingSubmission) {
-      const { error: updateError } = await supabase
-        .from("submissions")
-        .update({
-          content: content || null,
-          file_url: fileUrl,
-          storage_path: filePath,
-          submitted_at: new Date().toISOString(),
-        })
-        .eq("id", existingSubmission.id);
-
-      if (updateError) {
-        setError("Failed to update submission");
-        setLoading(false);
-        return;
+      const STORE_PREFIX = "tw_";
+      const allSubs = getSubmissions();
+      const idx = allSubs.findIndex((s) => s.id === existingSubmission.id);
+      if (idx !== -1) {
+        allSubs[idx].content = content || null;
+        allSubs[idx].file_url = fileUrl;
+        allSubs[idx].submitted_at = new Date().toISOString();
+        localStorage.setItem(STORE_PREFIX + "submissions", JSON.stringify(allSubs));
       }
     } else {
-      const { error: insertError } = await supabase.from("submissions").insert({
+      saveSubmission({
         homework_id: homeworkId,
-        student_id: user.id,
+        student_id: session.id,
         content: content || null,
         file_url: fileUrl,
-        storage_path: filePath,
       });
-
-      if (insertError) {
-        setError("Failed to submit homework");
-        setLoading(false);
-        return;
-      }
     }
 
     router.push(`/student/classes/${classId}/workspaces/${workspaceId}`);

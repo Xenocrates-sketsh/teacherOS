@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
-import { createClient } from "@/lib/supabase/client";
+import { getClasses, getWorkspaces, getClassCodes, saveClassCode, getStudentClasses } from "@/lib/store";
 
 interface Workspace {
   id: string;
@@ -33,105 +33,79 @@ export default function ClassDetailPage() {
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const classes = getClasses();
+    const classInfo = classes.find((c) => c.id === classId);
 
-      // Get class info
-      const { data: classInfo } = await supabase
-        .from("classes")
-        .select("*")
-        .eq("id", classId)
-        .single();
+    const workspaceData = getWorkspaces(classId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get workspaces
-      const { data: workspaceData } = await supabase
-        .from("subject_workspaces")
-        .select("*")
-        .eq("class_id", classId)
-        .order("created_at", { ascending: false });
+    const codesData = getClassCodes(classId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Get class codes
-      const { data: codesData } = await supabase
-        .from("class_codes")
-        .select("*")
-        .eq("class_id", classId)
-        .order("created_at", { ascending: false });
+    const enrollments = getStudentClasses(undefined, classId);
 
-      // Get student count
-      const { count } = await supabase
-        .from("student_classes")
-        .select("*", { count: "exact", head: true })
-        .eq("class_id", classId);
-
-      setClassData(classInfo);
-      setWorkspaces(workspaceData || []);
-      setClassCodes(codesData || []);
-      setStudentCount(count || 0);
-      setLoading(false);
-    };
-
-    fetchData();
+    setClassData(classInfo);
+    setWorkspaces(workspaceData);
+    setClassCodes(codesData);
+    setStudentCount(enrollments.length);
+    setLoading(false);
   }, [classId]);
 
-  const generateCode = async () => {
-    const supabase = createClient();
+  const generateCode = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let code = "";
     for (let i = 0; i < 6; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
-    const { error } = await supabase.from("class_codes").insert({
+    const newCode = saveClassCode({
       class_id: classId,
       code: code,
+      is_active: true,
     });
 
-    if (!error) {
-      setClassCodes((prev) => [
-        { id: crypto.randomUUID(), code, is_active: true, created_at: new Date().toISOString() },
-        ...prev,
-      ]);
-    }
+    setClassCodes((prev) => [newCode, ...prev]);
   };
 
-  const generateBulkCodes = async (count = 5) => {
-    const supabase = createClient();
+  const generateBulkCodes = (count = 5) => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    const newCodes: { code: string; is_active: boolean; class_id: string }[] = [];
+    const newCodes: ClassCode[] = [];
     for (let i = 0; i < count; i++) {
       let code = "";
       for (let j = 0; j < 6; j++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      newCodes.push({ code, is_active: true, class_id: classId });
+      const cc = saveClassCode({
+        class_id: classId,
+        code: code,
+        is_active: true,
+      });
+      newCodes.push(cc);
     }
 
-    const { error } = await supabase.from("class_codes").insert(newCodes);
-    if (!error) {
-      const now = new Date().toISOString();
-      setClassCodes((prev) => [
-        ...newCodes.map((c) => ({ id: crypto.randomUUID(), ...c, created_at: now })),
-        ...prev,
-      ]);
-    }
+    setClassCodes((prev) => [...newCodes, ...prev]);
   };
 
-  const toggleCodeActive = async (codeId: string, currentActive: boolean) => {
-    const supabase = createClient();
-
-    const { error } = await supabase
-      .from("class_codes")
-      .update({ is_active: !currentActive })
-      .eq("id", codeId);
-
-    if (!error) {
-      setClassCodes((prev) =>
-        prev.map((c) =>
-          c.id === codeId ? { ...c, is_active: !currentActive } : c
-        )
-      );
+  const toggleCodeActive = (codeId: string, currentActive: boolean) => {
+    const codes = getClassCodes(classId);
+    const target = codes.find((c) => c.id === codeId);
+    if (target) {
+      target.is_active = !currentActive;
+      const STORE_PREFIX = "tw_";
+      const allCodes = getClassCodes();
+      const idx = allCodes.findIndex((c) => c.id === codeId);
+      if (idx !== -1) {
+        allCodes[idx].is_active = !currentActive;
+        localStorage.setItem(STORE_PREFIX + "class_codes", JSON.stringify(allCodes));
+      }
     }
+
+    setClassCodes((prev) =>
+      prev.map((c) =>
+        c.id === codeId ? { ...c, is_active: !currentActive } : c
+      )
+    );
   };
 
   const copyCode = (code: string) => {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getUsers } from "@/lib/auth";
+import { getConversations, getMessages } from "@/lib/store";
 import Avatar from "@/app/components/ui/Avatar";
 import Badge from "@/app/components/ui/Badge";
 
@@ -33,84 +34,48 @@ export default function ConversationList({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      const supabase = createClient();
+    const allUsers = getUsers();
+    const convs = getConversations();
 
-      const { data: memberships } = await supabase
-        .from("conversation_members")
-        .select("conversation_id")
-        .eq("user_id", userId);
+    const convData: Conversation[] = convs.map((conv) => {
+      const msgs = getMessages(conv.id)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      const convIds = memberships?.map((m) => m.conversation_id) || [];
+      const lastMsg = msgs[0];
 
-      if (convIds.length === 0) {
-        setLoading(false);
-        return;
-      }
+      const unread = msgs.filter(
+        (m) => m.sender_id !== userId && !m.read_at
+      ).length;
 
-      const { data: convs } = await supabase
-        .from("conversations")
-        .select("*")
-        .in("id", convIds);
+      const otherUserId = msgs.find((m) => m.sender_id !== userId)?.sender_id;
+      const otherUser = conv.type === "direct"
+        ? allUsers.find((u) => u.id !== userId) || allUsers.find((u) => u.id === otherUserId)
+        : null;
 
-      const convData: Conversation[] = [];
+      return {
+        id: conv.id,
+        name: conv.name,
+        type: conv.type,
+        last_message: lastMsg?.content || null,
+        last_message_time: lastMsg?.created_at || null,
+        unread_count: unread,
+        other_user: otherUser
+          ? { id: otherUser.id, full_name: otherUser.full_name }
+          : null,
+      };
+    });
 
-      for (const conv of convs || []) {
-          const { data: members } = await supabase
-        .from("conversation_members")
-        .select("user_id, users(*)")
-        .eq("conversation_id", conv.id) as any;
+    convData.sort((a, b) => {
+      if (!a.last_message_time) return 1;
+      if (!b.last_message_time) return -1;
+      return (
+        new Date(b.last_message_time).getTime() -
+        new Date(a.last_message_time).getTime()
+      );
+    });
 
-        const otherMember = members?.find(
-          (m: any) => m.user_id !== userId
-        )?.users;
-
-        const { data: lastMsg } = await supabase
-          .from("messages")
-          .select("content, created_at")
-          .eq("conversation_id", conv.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
-
-        const { count: unreadCount } = await supabase
-          .from("messages")
-          .select("*", { count: "exact", head: true })
-          .eq("conversation_id", conv.id)
-          .is("read_at", null)
-          .neq("sender_id", userId);
-
-        convData.push({
-          id: conv.id,
-          name: conv.name,
-          type: conv.type,
-          last_message: lastMsg?.content || null,
-          last_message_time: lastMsg?.created_at || null,
-          unread_count: unreadCount || 0,
-          other_user:
-            conv.type === "direct" && otherMember
-              ? {
-                  id: otherMember.id,
-                  full_name: otherMember.full_name,
-                }
-              : null,
-        });
-      }
-
-      convData.sort((a, b) => {
-        if (!a.last_message_time) return 1;
-        if (!b.last_message_time) return -1;
-        return (
-          new Date(b.last_message_time).getTime() -
-          new Date(a.last_message_time).getTime()
-        );
-      });
-
-      setConversations(convData);
-      setLoading(false);
-    };
-
-    fetchConversations();
+    setConversations(convData);
+    setLoading(false);
   }, [userId]);
 
   if (loading) {

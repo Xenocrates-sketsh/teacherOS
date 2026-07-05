@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getClasses, updateClass, deleteClass, getStudentClasses, getUsers } from "@/lib/auth";
+import { getClasses as getStoreClasses } from "@/lib/store";
 import { Archive, RotateCcw } from "lucide-react";
 
 interface Student {
@@ -31,105 +32,55 @@ export default function ClassSettingsPage() {
   } | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const classes = getStoreClasses();
+    const classData = classes.find((c) => c.id === classId);
+    if (classData) {
+      setClassName(classData.name);
+      setArchived(classData.archived || false);
+    }
 
-      // Get class info
-      const { data: classData } = await supabase
-        .from("classes")
-        .select("name, archived")
-        .eq("id", classId)
-        .single();
-
-      if (classData) {
-        setClassName(classData.name);
-        setArchived(classData.archived || false);
-      }
-
-      // Get students in this class
-      const { data: members } = await supabase
-        .from("student_classes")
-        .select("student_id, joined_at, users(id, full_name, email), student_profiles(student_id)")
-        .eq("class_id", classId);
-
-      if (members) {
-        setStudents(
-          members.map((m: any) => ({
-            id: m.users.id,
-            full_name: m.users.full_name,
-            email: m.users.email,
-            student_id: m.student_profiles?.student_id || "N/A",
-            joined_at: m.joined_at,
-          }))
-        );
-      }
-
-      setLoading(false);
-    };
-
-    fetchData();
+    const enrollments = getStudentClasses(undefined, classId);
+    const allUsers = getUsers();
+    const studentList = enrollments.map((e) => {
+      const u = allUsers.find((user) => user.id === e.student_id);
+      return {
+        id: e.student_id,
+        full_name: u?.full_name || "Unknown",
+        email: u?.email || "",
+        student_id: e.student_id,
+        joined_at: e.joined_at,
+      };
+    });
+    setStudents(studentList);
+    setLoading(false);
   }, [classId]);
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
-
-    const supabase = createClient();
-
-    const { error } = await supabase
-      .from("classes")
-      .update({ name: className })
-      .eq("id", classId);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to update class" });
-    } else {
-      setMessage({ type: "success", text: "Class updated successfully" });
-    }
-
+    updateClass(classId, { name: className });
+    setMessage({ type: "success", text: "Class updated successfully" });
     setSaving(false);
   };
 
-  const handleRemoveStudent = async (studentId: string) => {
-    if (!confirm("Are you sure you want to remove this student from the class?")) {
-      return;
-    }
+  const handleRemoveStudent = (studentId: string) => {
+    if (!confirm("Are you sure you want to remove this student from the class?")) return;
 
-    const supabase = createClient();
+    const enrollments = getStudentClasses();
+    const filtered = enrollments.filter((e) => !(e.student_id === studentId && e.class_id === classId));
+    const STORE_PREFIX = "tw_";
+    localStorage.setItem(STORE_PREFIX + "student_classes", JSON.stringify(filtered));
 
-    const { error } = await supabase
-      .from("student_classes")
-      .delete()
-      .eq("student_id", studentId)
-      .eq("class_id", classId);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to remove student" });
-    } else {
-      setStudents((prev) => prev.filter((s) => s.id !== studentId));
-      setMessage({ type: "success", text: "Student removed successfully" });
-    }
+    setStudents((prev) => prev.filter((s) => s.id !== studentId));
+    setMessage({ type: "success", text: "Student removed successfully" });
   };
 
-  const handleDelete = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this class? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+  const handleDelete = () => {
+    if (!confirm("Are you sure you want to delete this class? This action cannot be undone.")) return;
 
-    const supabase = createClient();
-
-    const { error } = await supabase.from("classes").delete().eq("id", classId);
-
-    if (error) {
-      setMessage({ type: "error", text: "Failed to delete class" });
-    } else {
-      router.push(`/dashboard/schools/${schoolId}`);
-    }
+    deleteClass(classId);
+    router.push(`/dashboard/schools/${schoolId}`);
   };
 
   if (loading) {
@@ -213,13 +164,9 @@ export default function ClassSettingsPage() {
               : "Archiving this class will hide it from the main dashboard. All content is preserved."}
           </p>
           <button
-            onClick={async () => {
+            onClick={() => {
               setArchiving(true);
-              const supabase = createClient();
-              await supabase
-                .from("classes")
-                .update({ archived: !archived })
-                .eq("id", classId);
+              updateClass(classId, { archived: !archived });
               setArchived(!archived);
               setArchiving(false);
               setMessage({

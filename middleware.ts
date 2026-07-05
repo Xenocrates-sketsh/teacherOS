@@ -1,8 +1,21 @@
-import { updateSession } from "@/lib/supabase/middleware";
-import { type NextRequest } from "next/server";
+import { getServerSession } from "@/lib/auth";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+const publicPaths = ["/login", "/register", "/join"];
+
+export function middleware(request: NextRequest) {
+  const session = getServerSession(request.headers.get("cookie") || "");
+
+  if (!session && !publicPaths.some((p) => request.nextUrl.pathname.startsWith(p))) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (session && publicPaths.some((p) => request.nextUrl.pathname === p)) {
+    const dashboard = session.role === "teacher" ? "/dashboard" : "/student";
+    return NextResponse.redirect(new URL(dashboard, request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { saveSchool, saveTeacherSchool } from "@/lib/store";
 
 export default function NewSchoolPage() {
   const router = useRouter();
@@ -11,53 +12,29 @@ export default function NewSchoolPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
     }
 
-    // Create school
-    const { data: school, error: schoolError } = await supabase
-      .from("schools")
-      .insert({
-        name: name,
-        created_by: user.id,
-      })
-      .select()
-      .single();
+    const school = saveSchool({
+      name: name,
+      created_by: session.id,
+    });
 
-    if (schoolError) {
-      setError("Failed to create school");
-      setLoading(false);
-      return;
-    }
-
-    // Add creator as admin
-    const { error: memberError } = await supabase
-      .from("teacher_schools")
-      .insert({
-        teacher_id: user.id,
-        school_id: school.id,
-        role: "admin",
-      });
-
-    if (memberError) {
-      setError("Failed to set up school membership");
-      setLoading(false);
-      return;
-    }
+    saveTeacherSchool({
+      teacher_id: session.id,
+      school_id: school.id,
+      role: "admin",
+    });
 
     router.push(`/dashboard/schools/${school.id}`);
   };

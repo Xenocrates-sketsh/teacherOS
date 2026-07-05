@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
 import FileUpload from "@/app/components/files/FileUpload";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
@@ -38,18 +38,14 @@ export default function NewResourcePage() {
     setError(null);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
@@ -67,23 +63,21 @@ export default function NewResourcePage() {
       return;
     }
 
-    const { error: resourceError } = await supabase.from("resources").insert({
-      title: title,
-      type: type,
+    const resources = JSON.parse(localStorage.getItem("tw_resources") || "[]");
+    resources.push({
+      id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
+      title,
+      type,
       file_url: type === "file" ? fileUrl : null,
       link_url: type === "link" ? linkUrl : null,
       storage_path: type === "file" ? filePath : null,
       file_size: type === "file" ? fileSize : null,
       mime_type: type === "file" ? fileMimeType : null,
       workspace_id: workspaceId,
-      created_by: user.id,
+      created_by: session.id,
+      created_at: new Date().toISOString(),
     });
-
-    if (resourceError) {
-      setError("Failed to create resource");
-      setLoading(false);
-      return;
-    }
+    localStorage.setItem("tw_resources", JSON.stringify(resources));
 
     router.push(
       `/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`

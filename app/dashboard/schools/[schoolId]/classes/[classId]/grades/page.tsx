@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, getUsers } from "@/lib/auth";
+import { getWorkspaces, getHomeworkList, getSubmissions, getGrades, getStudentClasses } from "@/lib/store";
 import { ArrowLeft, Users, BookOpen, Download } from "lucide-react";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
@@ -28,77 +29,56 @@ export default function GradesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supabase = createClient();
+    const enrollments = getStudentClasses(undefined, classId);
+    const allUsers = getUsers();
+    const studentList = enrollments.map((e) => {
+      const u = allUsers.find((user) => user.id === e.student_id);
+      return u || { id: e.student_id, full_name: "Unknown" };
+    });
+    setStudents(studentList);
 
-      const { data: enrollments } = await supabase
-        .from("student_classes")
-        .select("student_id, users(*)")
-        .eq("class_id", classId);
+    const workspaces = getWorkspaces(classId);
+    const workspaceIds = workspaces.map((w) => w.id);
+    const homeworkList = workspaceIds.length > 0
+      ? getHomeworkList().filter((h) => workspaceIds.includes(h.workspace_id))
+      : [];
 
-      const studentList = enrollments?.map((e: any) => e.users?.[0] || e.users) || [];
-      setStudents(studentList);
+    const gradeData: StudentGrade[] = [];
 
-      const { data: workspaces } = await supabase
-        .from("subject_workspaces")
-        .select("id")
-        .eq("class_id", classId);
+    for (const student of studentList) {
+      for (const hw of homeworkList) {
+        const submissions = getSubmissions(hw.id, student.id);
+        const submission = submissions[0];
 
-      const { data: homeworkList } = await supabase
-        .from("homework")
-        .select("id, title, workspace_id")
-        .in(
-          "workspace_id",
-          workspaces?.map((w) => w.id) || []
-        );
+        let grade = null;
+        let maxScore = 100;
+        let graded = false;
 
-      const gradeData: StudentGrade[] = [];
-
-      for (const student of studentList) {
-        for (const hw of homeworkList || []) {
-          const { data: submission } = await supabase
-            .from("submissions")
-            .select("id, file_url, content")
-            .eq("homework_id", hw.id)
-            .eq("student_id", student.id)
-            .single();
-
-          let grade = null;
-          let maxScore = 100;
-          let graded = false;
-
-          if (submission) {
-            const { data: gradeData_item } = await supabase
-              .from("grades")
-              .select("score, max_score")
-              .eq("submission_id", submission.id)
-              .single();
-
-            if (gradeData_item) {
-              grade = gradeData_item.score;
-              maxScore = gradeData_item.max_score;
-              graded = true;
-            }
+        if (submission) {
+          const gradeDataList = getGrades(submission.id);
+          const g = gradeDataList[0];
+          if (g) {
+            grade = g.score;
+            maxScore = g.max_score;
+            graded = true;
           }
-
-          gradeData.push({
-            student_id: student.id,
-            student_name: student.full_name,
-            homework_id: hw.id,
-            homework_title: hw.title,
-            score: grade,
-            max_score: maxScore,
-            submitted: !!submission,
-            graded,
-          });
         }
+
+        gradeData.push({
+          student_id: student.id,
+          student_name: student.full_name,
+          homework_id: hw.id,
+          homework_title: hw.title,
+          score: grade,
+          max_score: maxScore,
+          submitted: !!submission,
+          graded,
+        });
       }
+    }
 
-      setGrades(gradeData);
-      setLoading(false);
-    };
-
-    fetchData();
+    setGrades(gradeData);
+    setLoading(false);
   }, [classId]);
 
   const exportCSV = () => {

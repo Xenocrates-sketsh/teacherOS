@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getSchools, getClasses, getStudentClasses, getActivities, getTeacherSchools } from "@/lib/store";
 import {
   School,
   Search,
@@ -23,66 +24,33 @@ export default function DashboardPage() {
   const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
+    const session = getSession();
 
-      if (!authUser) {
-        window.location.href = "/login";
-        return;
-      }
+    if (!session || session.role !== "teacher") {
+      window.location.href = "/login";
+      return;
+    }
 
-      const { data: profile } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", authUser.id)
-        .single();
+    const teacherSchools = getTeacherSchools(session.id);
+    const schoolIds = teacherSchools.map((ts) => ts.school_id);
+    const allClasses = getClasses().filter((c) => schoolIds.includes(c.school_id) && !c.archived);
+    const classIds = allClasses.map((c) => c.id);
+    const allStudents = getStudentClasses(undefined).filter((sc) => classIds.includes(sc.class_id));
+    const uniqueStudents = new Set(allStudents.map((s) => s.student_id));
 
-      if (!profile || profile.role !== "teacher") {
-        window.location.href = "/login";
-        return;
-      }
+    setUser(session);
+    setStats({
+      schools: new Set(teacherSchools.map((ts) => ts.school_id)).size,
+      classes: allClasses.length,
+      students: uniqueStudents.size,
+    });
 
-      const { data: schools } = await supabase
-        .from("teacher_schools")
-        .select("school_id")
-        .eq("teacher_id", authUser.id);
+    const log = getActivities(session.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 5);
 
-      const { data: classes } = await supabase
-        .from("classes")
-        .select("id")
-        .in(
-          "school_id",
-          schools?.map((s) => s.school_id) || []
-        )
-        .eq("archived", false);
-
-      const { data: students } = await supabase
-        .from("student_classes")
-        .select("student_id")
-        .in("class_id", classes?.map((c) => c.id) || []);
-
-      setUser(profile);
-      setStats({
-        schools: schools?.length || 0,
-        classes: classes?.length || 0,
-        students: new Set(students?.map((s) => s.student_id) || []).size,
-      });
-
-      const { data: log } = await supabase
-        .from("activity_log")
-        .select("*")
-        .eq("user_id", authUser.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
-
-      setActivities(log || []);
-      setLoading(false);
-    };
-
-    checkAuth();
+    setActivities(log);
+    setLoading(false);
   }, []);
 
   if (loading) {

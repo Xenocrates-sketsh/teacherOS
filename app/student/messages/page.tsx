@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
 import ConversationList from "@/app/components/chat/ConversationList";
 import ChatView from "@/app/components/chat/ChatView";
 
@@ -14,22 +14,15 @@ export default function StudentMessagesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const session = getSession();
 
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+    if (!session) {
+      router.push("/login");
+      return;
+    }
 
-      setUserId(user.id);
-      setLoading(false);
-    };
-
-    checkAuth();
+    setUserId(session.id);
+    setLoading(false);
   }, [router]);
 
   if (loading || !userId) {

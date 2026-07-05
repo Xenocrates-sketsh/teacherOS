@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const projectRef = "fxqdqvkhxedlcwhfjaua";
+const SESSION_KEY = "tw_session";
 
 function isPublicPath(pathname: string) {
   return (
@@ -15,43 +15,16 @@ function isPublicPath(pathname: string) {
 
 export async function updateSession(request: NextRequest) {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const cookieHeader = request.headers.get("cookie") || "";
+    const match = cookieHeader.match(
+      new RegExp(`(?:^|; )${SESSION_KEY}=([^;]*)`)
+    );
+    const hasSession = match !== null;
 
-    if (!supabaseUrl || !supabaseKey) {
-      if (!isPublicPath(request.nextUrl.pathname)) {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-      return NextResponse.next({ request });
-    }
-
-    // Check for auth session via the access token cookie
-    const accessToken =
-      request.cookies.get(`sb-${projectRef}-auth-token`)?.value ||
-      request.cookies.get(`sb-access-token`)?.value;
-
-    let isAuthenticated = false;
-
-    if (accessToken) {
-      try {
-        const res = await fetch(
-          `${supabaseUrl}/auth/v1/user`,
-          {
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        const data = await res.json();
-        isAuthenticated = !!data.id;
-      } catch {
-        // Auth check failed, treat as unauthenticated
-      }
-    }
-
-    if (!isAuthenticated && !isPublicPath(request.nextUrl.pathname)) {
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!hasSession && !isPublicPath(request.nextUrl.pathname)) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
     }
 
     return NextResponse.next({ request });

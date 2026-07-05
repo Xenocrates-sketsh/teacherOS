@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession, logoutUser } from "@/lib/auth";
 import {
   Home,
   Plus,
@@ -28,38 +28,19 @@ export default function StudentLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createClient();
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
+    const session = getSession();
 
-      if (!authUser) {
-        router.push("/login");
-        return;
-      }
+    if (!session || session.role !== "student") {
+      router.push("/login");
+      return;
+    }
 
-      const { data: profile } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", authUser.id)
-        .single();
-
-      if (!profile || profile.role !== "student") {
-        router.push("/login");
-        return;
-      }
-
-      setUser(profile);
-      setLoading(false);
-    };
-
-    checkAuth();
+    setUser(session);
+    setLoading(false);
   }, [router]);
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    logoutUser();
     router.push("/login");
   };
 

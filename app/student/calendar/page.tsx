@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getStudentClasses, getEvents } from "@/lib/store";
 import Calendar from "@/app/components/calendar/Calendar";
 import Modal from "@/app/components/ui/Modal";
 
@@ -21,32 +22,18 @@ export default function StudentCalendarPage() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const session = getSession();
+    if (!session) return;
 
-      if (!user) return;
+    const enrollments = getStudentClasses(session.id);
+    const classIds = enrollments.map((e) => e.class_id);
 
-      const { data: enrollments } = await supabase
-        .from("student_classes")
-        .select("class_id")
-        .eq("student_id", user.id);
+    const allEvents = classIds.length > 0
+      ? getEvents().filter((e) => e.class_id && classIds.includes(e.class_id))
+      : [];
 
-      const { data: eventsList } = await supabase
-        .from("events")
-        .select("*")
-        .in(
-          "class_id",
-          enrollments?.map((e) => e.class_id) || []
-        );
-
-      setEvents(eventsList || []);
-      setLoading(false);
-    };
-
-    fetchEvents();
+    setEvents(allEvents);
+    setLoading(false);
   }, []);
 
   if (loading) {

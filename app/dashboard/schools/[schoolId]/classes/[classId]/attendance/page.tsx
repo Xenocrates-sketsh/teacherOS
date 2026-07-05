@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getClasses, getAttendanceSessions, saveAttendanceSession, getAttendanceRecords, getStudentClasses } from "@/lib/store";
 import { ArrowLeft, Plus, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 
@@ -29,82 +30,56 @@ export default function AttendancePage() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, [classId]);
-
-  const fetchData = async () => {
-    const supabase = createClient();
-    const { data: classData } = await supabase
-      .from("classes")
-      .select("name")
-      .eq("id", classId)
-      .single();
-
+    const classes = getClasses();
+    const classData = classes.find((c) => c.id === classId);
     if (classData) setClassName(classData.name);
 
-    const { data: sessionsData } = await supabase
-      .from("attendance_sessions")
-      .select("*")
-      .eq("class_id", classId)
-      .order("date", { ascending: false });
+    const sessionsData = getAttendanceSessions(classId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    const enriched: Session[] = [];
-    for (const session of sessionsData || []) {
-      const { data: records } = await supabase
-        .from("attendance_records")
-        .select("status")
-        .eq("session_id", session.id);
+    const enrollments = getStudentClasses(undefined, classId);
+    const totalStudents = enrollments.length;
 
-      const statuses = records || [];
-      const { count: totalStudents } = await supabase
-        .from("student_classes")
-        .select("*", { count: "exact", head: true })
-        .eq("class_id", classId);
-
-      enriched.push({
+    const enriched: Session[] = sessionsData.map((session) => {
+      const records = getAttendanceRecords(session.id);
+      return {
         id: session.id,
         date: session.date,
         created_at: session.created_at,
-        total_present: statuses.filter((r) => r.status === "present").length,
-        total_absent: statuses.filter((r) => r.status === "absent").length,
-        total_late: statuses.filter((r) => r.status === "late").length,
-        total_excused: statuses.filter((r) => r.status === "excused").length,
-        total_students: totalStudents || 0,
-      });
-    }
+        total_present: records.filter((r) => r.status === "present").length,
+        total_absent: records.filter((r) => r.status === "absent").length,
+        total_late: records.filter((r) => r.status === "late").length,
+        total_excused: records.filter((r) => r.status === "excused").length,
+        total_students: totalStudents,
+      };
+    });
 
     setSessions(enriched);
     setLoading(false);
-  };
+  }, [classId]);
 
-  const startNewSession = async () => {
+  const startNewSession = () => {
     setCreating(true);
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const session = getSession();
+    if (!session) return;
 
     const today = new Date().toISOString().split("T")[0];
-    const { data: existing } = await supabase
-      .from("attendance_sessions")
-      .select("id")
-      .eq("class_id", classId)
-      .eq("date", today)
-      .maybeSingle();
+    const existing = getAttendanceSessions(classId).find(
+      (s) => s.date === today
+    );
 
     if (existing) {
       router.push(`/dashboard/schools/${schoolId}/classes/${classId}/attendance/${existing.id}`);
       return;
     }
 
-    const { data: session } = await supabase
-      .from("attendance_sessions")
-      .insert({ class_id: classId, date: today, created_by: user.id })
-      .select()
-      .single();
+    const newSession = saveAttendanceSession({
+      class_id: classId,
+      date: today,
+      created_by: session.id,
+    });
 
-    if (session) {
-      router.push(`/dashboard/schools/${schoolId}/classes/${classId}/attendance/${session.id}`);
-    }
+    router.push(`/dashboard/schools/${schoolId}/classes/${classId}/attendance/${newSession.id}`);
     setCreating(false);
   };
 

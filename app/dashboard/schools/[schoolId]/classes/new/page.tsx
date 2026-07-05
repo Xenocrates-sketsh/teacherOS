@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { saveClass, saveClassCode } from "@/lib/store";
 
 export default function NewClassPage() {
   const router = useRouter();
@@ -13,39 +13,23 @@ export default function NewClassPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-
-    // Create class
-    const { data: classData, error: classError } = await supabase
-      .from("classes")
-      .insert({
-        name: name,
-        school_id: schoolId,
-      })
-      .select()
-      .single();
-
-    if (classError) {
-      setError("Failed to create class");
-      setLoading(false);
-      return;
-    }
-
-    // Generate class code
-    const code = generateClassCode();
-    const { error: codeError } = await supabase.from("class_codes").insert({
-      class_id: classData.id,
-      code: code,
+    const classData = saveClass({
+      name: name,
+      school_id: schoolId,
+      archived: false,
     });
 
-    if (codeError) {
-      console.error("Failed to generate class code:", codeError);
-    }
+    const code = generateClassCode();
+    saveClassCode({
+      class_id: classData.id,
+      code: code,
+      is_active: true,
+    });
 
     router.push(`/dashboard/schools/${schoolId}/classes/${classData.id}`);
   };

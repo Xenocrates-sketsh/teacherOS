@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getWorkspaces, getHomeworkList, getSubmissions, getGrades } from "@/lib/store";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import Badge from "@/app/components/ui/Badge";
 
@@ -25,76 +26,53 @@ export default function StudentGradesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchGrades = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    const session = getSession();
+    if (!session) return;
 
-      if (!user) return;
+    const workspaces = getWorkspaces(classId);
+    const workspaceIds = workspaces.map((w) => w.id);
+    const homeworkList = workspaceIds.length > 0
+      ? getHomeworkList().filter((h) => workspaceIds.includes(h.workspace_id))
+      : [];
 
-      const { data: workspaces } = await supabase
-        .from("subject_workspaces")
-        .select("id, name")
-        .eq("class_id", classId);
+    const gradeData: GradeItem[] = [];
 
-      const { data: homeworkList } = await supabase
-        .from("homework")
-        .select("id, title, workspace_id")
-        .in(
-          "workspace_id",
-          workspaces?.map((w) => w.id) || []
-        );
+    for (const hw of homeworkList) {
+      const workspace = workspaces.find((w) => w.id === hw.workspace_id);
 
-      const gradeData: GradeItem[] = [];
+      const subs = getSubmissions(hw.id, session.id);
+      const submission = subs[0];
 
-      for (const hw of homeworkList || []) {
-        const workspace = workspaces?.find((w) => w.id === hw.workspace_id);
+      let score = null;
+      let maxScore = 100;
+      let graded = false;
+      let feedback = null;
 
-        const { data: submission } = await supabase
-          .from("submissions")
-          .select("id")
-          .eq("homework_id", hw.id)
-          .eq("student_id", user.id)
-          .single();
-
-        let score = null;
-        let maxScore = 100;
-        let graded = false;
-        let feedback = null;
-
-        if (submission) {
-          const { data: grade } = await supabase
-            .from("grades")
-            .select("score, max_score, feedback")
-            .eq("submission_id", submission.id)
-            .single();
-
-          if (grade) {
-            score = grade.score;
-            maxScore = grade.max_score;
-            graded = true;
-            feedback = grade.feedback;
-          }
+      if (submission) {
+        const gradeList = getGrades(submission.id);
+        const grade = gradeList[0];
+        if (grade) {
+          score = grade.score;
+          maxScore = grade.max_score;
+          graded = true;
+          feedback = grade.feedback;
         }
-
-        gradeData.push({
-          homework_id: hw.id,
-          homework_title: hw.title,
-          workspace_name: workspace?.name || "Unknown",
-          score,
-          max_score: maxScore,
-          submitted: !!submission,
-          graded,
-          feedback,
-        });
       }
 
-      setGrades(gradeData);
-      setLoading(false);
-    };
+      gradeData.push({
+        homework_id: hw.id,
+        homework_title: hw.title,
+        workspace_name: workspace?.name || "Unknown",
+        score,
+        max_score: maxScore,
+        submitted: !!submission,
+        graded,
+        feedback,
+      });
+    }
 
-    fetchGrades();
+    setGrades(gradeData);
+    setLoading(false);
   }, [classId]);
 
   if (loading) {

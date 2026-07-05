@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { saveLesson } from "@/lib/store";
 
 export default function NewLessonPage() {
   const router = useRouter();
@@ -16,41 +17,24 @@ export default function NewLessonPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    const session = getSession();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    if (!session) {
       setError("Not authenticated");
       setLoading(false);
       return;
     }
 
-    const { error: lessonError } = await supabase.from("lessons").insert({
+    saveLesson({
       title: title,
       content: content,
       workspace_id: workspaceId,
-      created_by: user.id,
-    });
-
-    if (lessonError) {
-      setError("Failed to create lesson");
-      setLoading(false);
-      return;
-    }
-
-    await supabase.from("activity_log").insert({
-      user_id: user.id,
-      action_type: "created lesson",
-      target_type: "lesson",
-      metadata: { title, workspace_id: workspaceId },
+      created_by: session.id,
     });
 
     router.push(

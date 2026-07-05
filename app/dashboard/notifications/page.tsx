@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getSession } from "@/lib/auth";
+import { getNotifications, markNotificationRead } from "@/lib/store";
 import Link from "next/link";
 import { Bell, CheckCheck, ArrowRight } from "lucide-react";
 import Button from "@/app/components/ui/Button";
@@ -21,29 +22,21 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchNotifications();
+    const session = getSession();
+    if (!session) return;
+
+    const all = getNotifications(session.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    setNotifications(all);
+    setLoading(false);
   }, []);
 
-  const fetchNotifications = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    setNotifications(data || []);
-    setLoading(false);
-  };
-
-  const markAllRead = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase.from("notifications").update({ is_read: true }).eq("user_id", user.id).is("is_read", false);
+  const markAllRead = () => {
+    const session = getSession();
+    if (!session) return;
+    const unread = notifications.filter((n) => !n.is_read);
+    unread.forEach((n) => markNotificationRead(n.id));
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
   };
 
