@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Download, FileText, CheckCircle, Clock } from "lucide-react";
@@ -24,7 +24,6 @@ interface Submission {
 
 export default function SubmissionsPage() {
   const params = useParams();
-  const router = useRouter();
   const schoolId = params.schoolId as string;
   const classId = params.classId as string;
   const workspaceId = params.workspaceId as string;
@@ -32,8 +31,10 @@ export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [grading, setGrading] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
   const [score, setScore] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -75,47 +76,63 @@ export default function SubmissionsPage() {
   }, [homeworkId]);
 
   const handleGrade = async (submissionId: string) => {
+    setSaving(submissionId);
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
+    if (!user) {
+      setSaving(null);
+      return;
+    }
+
+    const parsedScore = parseFloat(score);
+    if (isNaN(parsedScore) || parsedScore < 0 || parsedScore > 100) {
+      setSaving(null);
+      return;
+    }
 
     const { data: existingGrade } = await supabase
       .from("grades")
       .select("id")
       .eq("submission_id", submissionId)
-      .single();
+      .maybeSingle();
 
-    if (existingGrade) {
-      await supabase
-        .from("grades")
-        .update({
-          score: parseFloat(score),
+    const { error } = existingGrade
+      ? await supabase
+          .from("grades")
+          .update({
+            score: parsedScore,
+            feedback,
+            graded_at: new Date().toISOString(),
+          })
+          .eq("id", existingGrade.id)
+      : await supabase.from("grades").insert({
+          submission_id: submissionId,
+          teacher_id: user.id,
+          score: parsedScore,
+          max_score: 100,
           feedback,
-          graded_at: new Date().toISOString(),
-        })
-        .eq("id", existingGrade.id);
-    } else {
-      await supabase.from("grades").insert({
-        submission_id: submissionId,
-        teacher_id: user.id,
-        score: parseFloat(score),
-        max_score: 100,
-        feedback,
-      });
+        });
+
+    if (error) {
+      setSaving(null);
+      return;
     }
 
     setSubmissions((prev) =>
       prev.map((sub) =>
         sub.id === submissionId
-          ? { ...sub, score: parseFloat(score), feedback, graded: true }
+          ? { ...sub, score: parsedScore, feedback }
           : sub
       )
     );
 
+    setSuccessMsg("Grade saved!");
+    setTimeout(() => setSuccessMsg(null), 2000);
     setGrading(null);
+    setSaving(null);
     setScore("");
     setFeedback("");
   };
@@ -138,10 +155,20 @@ export default function SubmissionsPage() {
           <ArrowLeft className="w-4 h-4" />
           Back to Workspace
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">Submissions</h1>
-        <p className="text-gray-500 mt-1">
-          {submissions.length} submission{submissions.length !== 1 ? "s" : ""}
-        </p>
+        <div className="flex items-center justify-between mt-2">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
+            <p className="text-gray-500 mt-1">
+              {submissions.length} submission{submissions.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+          {successMsg && (
+            <div className="flex items-center gap-1 text-sm text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
+              <CheckCircle className="w-4 h-4" />
+              {successMsg}
+            </div>
+          )}
+        </div>
       </div>
 
       {submissions.length === 0 ? (
@@ -234,7 +261,8 @@ export default function SubmissionsPage() {
                     <Button
                       size="sm"
                       onClick={() => handleGrade(sub.id)}
-                      disabled={!score}
+                      disabled={!score || saving === sub.id}
+                      loading={saving === sub.id}
                     >
                       Save
                     </Button>

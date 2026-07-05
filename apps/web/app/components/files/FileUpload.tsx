@@ -76,6 +76,26 @@ export default function FileUpload({
     if (file) handleFileSelect(file);
   };
 
+  const uploadWithRetry = async (
+    supabase: any,
+    bucket: string,
+    filePath: string,
+    file: File,
+    maxRetries = 2
+  ): Promise<boolean> => {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const { error } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, file, { upsert: attempt > 0 });
+
+      if (!error) return true;
+      if (attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+      }
+    }
+    return false;
+  };
+
   const handleUpload = async () => {
     if (!selectedFile) return;
 
@@ -88,17 +108,17 @@ export default function FileUpload({
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error("Please sign in to upload files");
 
       const fileExt = selectedFile.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
       const filePath = `${folder}/${user.id}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, selectedFile);
+      const success = await uploadWithRetry(supabase, bucket, filePath, selectedFile);
 
-      if (uploadError) throw uploadError;
+      if (!success) {
+        throw new Error("Upload failed after multiple attempts. Please check your connection and try again.");
+      }
 
       const {
         data: { publicUrl },
@@ -107,7 +127,7 @@ export default function FileUpload({
       onUpload(publicUrl, filePath, selectedFile.size, selectedFile.type);
       setSelectedFile(null);
     } catch (error: any) {
-      onError?.(error.message || "Upload failed");
+      onError?.(error.message || "Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }

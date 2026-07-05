@@ -34,6 +34,7 @@ export default function SchoolDetailPage() {
         .from("classes")
         .select("*")
         .eq("school_id", schoolId)
+        .eq("archived", false)
         .order("created_at", { ascending: false });
 
       setSchool(schoolData);

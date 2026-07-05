@@ -54,7 +54,8 @@ export default function DashboardPage() {
         .in(
           "school_id",
           schools?.map((s) => s.school_id) || []
-        );
+        )
+        .eq("archived", false);
 
       const { data: students } = await supabase
         .from("student_classes")

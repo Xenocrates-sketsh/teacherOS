@@ -49,7 +49,9 @@ export default function StudentPage() {
 
       setUser(profile);
       setEnrolledClasses(
-        enrollments?.map((e) => e.classes).filter(Boolean) || []
+        (enrollments || [])
+          .map((e) => e.classes)
+          .filter((c: any) => c && !c.archived) || []
       );
       setLoading(false);
     };

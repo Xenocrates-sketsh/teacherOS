@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { Archive, RotateCcw } from "lucide-react";
 
 interface Student {
   id: string;
@@ -21,7 +22,9 @@ export default function ClassSettingsPage() {
   const [className, setClassName] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [archived, setArchived] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [archiving, setArchiving] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -34,12 +37,13 @@ export default function ClassSettingsPage() {
       // Get class info
       const { data: classData } = await supabase
         .from("classes")
-        .select("name")
+        .select("name, archived")
         .eq("id", classId)
         .single();
 
       if (classData) {
         setClassName(classData.name);
+        setArchived(classData.archived || false);
       }
 
       // Get students in this class
@@ -194,6 +198,45 @@ export default function ClassSettingsPage() {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+
+      {/* Archive */}
+      <div className="bg-white shadow rounded-lg mb-6">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            {archived ? "Archived Class" : "Archive Class"}
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            {archived
+              ? "This class is archived. It is hidden from the main dashboard but all content is preserved."
+              : "Archiving this class will hide it from the main dashboard. All content is preserved."}
+          </p>
+          <button
+            onClick={async () => {
+              setArchiving(true);
+              const supabase = createClient();
+              await supabase
+                .from("classes")
+                .update({ archived: !archived })
+                .eq("id", classId);
+              setArchived(!archived);
+              setArchiving(false);
+              setMessage({
+                type: "success",
+                text: archived ? "Class restored successfully" : "Class archived successfully",
+              });
+            }}
+            disabled={archiving}
+            className={`inline-flex justify-center items-center gap-2 py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              archived
+                ? "bg-green-600 hover:bg-green-700 focus:ring-green-500"
+                : "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500"
+            } disabled:opacity-50`}
+          >
+            {archived ? <RotateCcw className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+            {archiving ? "Processing..." : archived ? "Restore Class" : "Archive Class"}
+          </button>
         </div>
       </div>
 
