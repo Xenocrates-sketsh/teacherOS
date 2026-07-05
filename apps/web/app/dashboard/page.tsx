@@ -3,9 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import {
+  School,
+  Search,
+  Archive,
+  Settings,
+  MessageSquare,
+  Calendar,
+  BookOpen,
+  Users,
+  Plus,
+} from "lucide-react";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
+  const [stats, setStats] = useState({ schools: 0, classes: 0, students: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +43,30 @@ export default function DashboardPage() {
         return;
       }
 
+      const { data: schools } = await supabase
+        .from("teacher_schools")
+        .select("school_id")
+        .eq("teacher_id", authUser.id);
+
+      const { data: classes } = await supabase
+        .from("classes")
+        .select("id")
+        .in(
+          "school_id",
+          schools?.map((s) => s.school_id) || []
+        );
+
+      const { data: students } = await supabase
+        .from("student_classes")
+        .select("student_id")
+        .in("class_id", classes?.map((c) => c.id) || []);
+
       setUser(profile);
+      setStats({
+        schools: schools?.length || 0,
+        classes: classes?.length || 0,
+        students: new Set(students?.map((s) => s.student_id) || []).size,
+      });
       setLoading(false);
     };
 
@@ -46,42 +81,101 @@ export default function DashboardPage() {
     );
   }
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
-        Welcome, {user?.full_name}
-      </h1>
-      <p className="text-gray-600 mb-8">Your teacher dashboard</p>
+  const quickActions = [
+    {
+      icon: School,
+      label: "My Schools",
+      href: "/dashboard/schools",
+      description: "Manage your schools and classes",
+    },
+    {
+      icon: MessageSquare,
+      label: "Messages",
+      href: "/dashboard/messages",
+      description: "Chat with students",
+    },
+    {
+      icon: Calendar,
+      label: "Calendar",
+      href: "/dashboard/calendar",
+      description: "View schedule and events",
+    },
+    {
+      icon: Search,
+      label: "Search",
+      href: "/dashboard/search",
+      description: "Find content across all classes",
+    },
+  ];
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Welcome back, {user?.full_name?.split(" ")[0]}
+          </h1>
+          <p className="text-gray-500 mt-1">Here&apos;s your teaching overview</p>
+        </div>
         <Link
-          href="/dashboard/schools"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+          href="/dashboard/schools/new"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
         >
-          <h2 className="text-lg font-medium text-gray-900">My Schools</h2>
-          <p className="text-sm text-gray-500">Manage your schools</p>
+          <Plus className="w-4 h-4" />
+          New School
         </Link>
-        <Link
-          href="/dashboard/search"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h2 className="text-lg font-medium text-gray-900">Search</h2>
-          <p className="text-sm text-gray-500">Find content</p>
-        </Link>
-        <Link
-          href="/dashboard/archive"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h2 className="text-lg font-medium text-gray-900">Archive</h2>
-          <p className="text-sm text-gray-500">Archived classes</p>
-        </Link>
-        <Link
-          href="/dashboard/settings"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h2 className="text-lg font-medium text-gray-900">Settings</h2>
-          <p className="text-sm text-gray-500">Account settings</p>
-        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+              <School className="w-6 h-6 text-primary-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.schools}</p>
+              <p className="text-sm text-gray-500">Schools</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.classes}</p>
+              <p className="text-sm text-gray-500">Classes</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.students}</p>
+              <p className="text-sm text-gray-500">Students</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {quickActions.map((action) => (
+          <Link
+            key={action.label}
+            href={action.href}
+            className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-200 transition-all group"
+          >
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-100 transition-colors">
+              <action.icon className="w-5 h-5 text-gray-600 group-hover:text-primary-600 transition-colors" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-1">{action.label}</h3>
+            <p className="text-sm text-gray-500">{action.description}</p>
+          </Link>
+        ))}
       </div>
     </div>
   );
