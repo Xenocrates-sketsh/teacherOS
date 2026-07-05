@@ -12,6 +12,7 @@ export default function JoinPage() {
   const [classInfo, setClassInfo] = useState<{
     class_id: string;
     class_name: string;
+    school_id: string;
     school_name: string;
   } | null>(null);
   const [fullName, setFullName] = useState("");
@@ -20,6 +21,7 @@ export default function JoinPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ export default function JoinPage() {
     // Get class and school info
     const { data: classData, error: classError } = await supabase
       .from("classes")
-      .select("id, name, schools(name)")
+      .select("id, name, school_id, schools(name)")
       .eq("id", codeData.class_id)
       .single();
 
@@ -63,6 +65,7 @@ export default function JoinPage() {
     setClassInfo({
       class_id: classData.id,
       class_name: classData.name,
+      school_id: classData.school_id,
       school_name: (classData.schools as any).name,
     });
     setStep("register");
@@ -100,7 +103,7 @@ export default function JoinPage() {
     }
 
     if (!authData.user) {
-      setError("Failed to create account");
+      setError("An account with this email may already exist. Try logging in.");
       setLoading(false);
       return;
     }
@@ -114,24 +117,22 @@ export default function JoinPage() {
     });
 
     if (profileError) {
-      setError("Failed to create profile");
+      setError("Failed to create profile. Please try again.");
       setLoading(false);
       return;
     }
 
     // Create student profile
     const studentId = `STU${Date.now().toString(36).toUpperCase()}`;
-    const { error: studentProfileError } = await supabase
+    await supabase
       .from("student_profiles")
       .insert({
         user_id: authData.user.id,
         student_id: studentId,
-        school_id: classInfo?.class_id,
-      });
-
-    if (studentProfileError) {
-      console.error("Failed to create student profile:", studentProfileError);
-    }
+        school_id: classInfo?.school_id,
+      })
+      .then(() => {})
+      .catch(() => {});
 
     // Enroll in class
     const { error: enrollError } = await supabase
@@ -147,8 +148,32 @@ export default function JoinPage() {
       return;
     }
 
-    router.push("/student");
+    if (authData.session) {
+      router.push("/student");
+    } else {
+      setSuccess(true);
+      setLoading(false);
+    }
   };
+
+  if (success) {
+    return (
+      <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
+        <div className="rounded-full bg-green-100 p-3 w-12 h-12 mx-auto flex items-center justify-center">
+          <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+        </div>
+        <h2 className="mt-4 text-lg font-semibold text-gray-900">Check your email</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then log in to access your class.
+        </p>
+        <div className="mt-6">
+          <a href="/login" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Go to login
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">

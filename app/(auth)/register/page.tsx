@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,27 +46,61 @@ export default function RegisterPage() {
     }
 
     if (!authData.user) {
-      setError("Failed to create account");
+      setError("An account with this email may already exist. Try logging in.");
       setLoading(false);
       return;
     }
 
-    // Create user profile
-    const { error: profileError } = await supabase.from("users").insert({
-      id: authData.user.id,
-      email: email,
-      role: "teacher",
-      full_name: fullName,
-    });
+    // If session exists, user is auto-confirmed — create profile and redirect
+    if (authData.session) {
+      const { error: profileError } = await supabase.from("users").insert({
+        id: authData.user.id,
+        email: email,
+        role: "teacher",
+        full_name: fullName,
+      });
 
-    if (profileError) {
-      setError("Failed to create profile");
+      if (profileError) {
+        setError("Failed to create profile. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/dashboard");
+    } else {
+      // Email confirmation required — still create the profile row
+      // (the auth trigger will handle it, but try anyway for auto-confirm setups)
+      await supabase.from("users").insert({
+        id: authData.user.id,
+        email: email,
+        role: "teacher",
+        full_name: fullName,
+      }).then(() => {}).catch(() => {});
+
+      setError(null);
       setLoading(false);
-      return;
+      setSuccess(true);
     }
-
-    router.push("/dashboard");
   };
+
+  if (success) {
+    return (
+      <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
+        <div className="rounded-full bg-green-100 p-3 w-12 h-12 mx-auto flex items-center justify-center">
+          <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+        </div>
+        <h2 className="mt-4 text-lg font-semibold text-gray-900">Check your email</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then log in.
+        </p>
+        <div className="mt-6">
+          <a href="/login" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Go to login
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
