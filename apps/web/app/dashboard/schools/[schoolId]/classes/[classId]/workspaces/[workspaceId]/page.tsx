@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import GradeDistribution from "@/app/components/charts/GradeDistribution";
 
 interface Content {
   id: string;
@@ -298,6 +299,20 @@ export default function WorkspaceDetailPage() {
                 New Homework
               </Link>
             </div>
+            {homework.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+                <GradeDistribution
+                  ranges={[
+                    { label: "90-100%", count: 0, color: "bg-green-500" },
+                    { label: "70-89%", count: 0, color: "bg-blue-500" },
+                    { label: "50-69%", count: 0, color: "bg-yellow-500" },
+                    { label: "0-49%", count: 0, color: "bg-red-500" },
+                  ]}
+                  total={0}
+                />
+              </div>
+            )}
+
             {homework.length === 0 ? (
               <div className="bg-white rounded-lg shadow p-8 text-center">
                 <p className="text-sm text-gray-500">No homework yet.</p>

@@ -16,6 +16,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import NotificationBell from "@/app/components/notifications/NotificationBell";
+import DarkModeToggle from "@/app/components/ui/DarkModeToggle";
 
 export default function StudentLayout({
   children,
@@ -103,6 +104,7 @@ export default function StudentLayout({
             </div>
 
             <div className="flex items-center gap-3">
+              <DarkModeToggle />
               <NotificationBell />
               <Link
                 href="/student/settings"

@@ -73,7 +73,7 @@ export default function ClassDetailPage() {
     fetchData();
   }, [classId]);
 
-  const generateNewCode = async () => {
+  const generateCode = async () => {
     const supabase = createClient();
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let code = "";
@@ -89,6 +89,29 @@ export default function ClassDetailPage() {
     if (!error) {
       setClassCodes((prev) => [
         { id: crypto.randomUUID(), code, is_active: true, created_at: new Date().toISOString() },
+        ...prev,
+      ]);
+    }
+  };
+
+  const generateBulkCodes = async (count = 5) => {
+    const supabase = createClient();
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    const newCodes: { code: string; is_active: boolean; class_id: string }[] = [];
+    for (let i = 0; i < count; i++) {
+      let code = "";
+      for (let j = 0; j < 6; j++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      newCodes.push({ code, is_active: true, class_id: classId });
+    }
+
+    const { error } = await supabase.from("class_codes").insert(newCodes);
+    if (!error) {
+      const now = new Date().toISOString();
+      setClassCodes((prev) => [
+        ...newCodes.map((c) => ({ id: crypto.randomUUID(), ...c, created_at: now })),
         ...prev,
       ]);
     }
@@ -271,10 +294,16 @@ export default function ClassDetailPage() {
 
                   {/* Generate new code */}
                   <button
-                    onClick={generateNewCode}
+                    onClick={generateCode}
                     className="w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-sm text-gray-600 hover:border-primary-400 hover:text-primary-600"
                   >
                     + Generate New Code
+                  </button>
+                  <button
+                    onClick={() => generateBulkCodes(5)}
+                    className="w-full border-2 border-dashed border-gray-300 rounded-lg p-3 text-xs text-gray-500 hover:border-primary-400 hover:text-primary-600"
+                  >
+                    + Generate 5 Codes (Bulk)
                   </button>
                 </div>
               </div>

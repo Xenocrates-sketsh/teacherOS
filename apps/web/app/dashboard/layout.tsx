@@ -19,6 +19,7 @@ import {
   Bell,
 } from "lucide-react";
 import NotificationBell from "@/app/components/notifications/NotificationBell";
+import DarkModeToggle from "@/app/components/ui/DarkModeToggle";
 
 export default function DashboardLayout({
   children,
@@ -178,7 +179,10 @@ export default function DashboardLayout({
                 Teacher Workspace
               </span>
             </div>
-            <NotificationBell />
+            <div className="flex items-center gap-1">
+              <DarkModeToggle />
+              <NotificationBell />
+            </div>
           </div>
         </div>
 

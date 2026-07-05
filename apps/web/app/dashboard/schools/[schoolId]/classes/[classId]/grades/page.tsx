@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { ArrowLeft, Users, BookOpen } from "lucide-react";
+import { ArrowLeft, Users, BookOpen, Download } from "lucide-react";
 import Badge from "@/app/components/ui/Badge";
+import Button from "@/app/components/ui/Button";
 
 interface StudentGrade {
   student_id: string;
@@ -100,6 +101,25 @@ export default function GradesPage() {
     fetchData();
   }, [classId]);
 
+  const exportCSV = () => {
+    const header = "Student,Average,Submissions,Graded\n";
+    const rows = students.map((student) => {
+      const studentGrades = grades.filter((g) => g.student_id === student.id);
+      const submitted = studentGrades.filter((g) => g.submitted).length;
+      const graded = studentGrades.filter((g) => g.graded).length;
+      const avg = getStudentAverage(student.id);
+      return `${student.full_name},${avg !== null ? avg + "%" : "N/A"},${submitted}/${studentGrades.length},${graded}/${studentGrades.length}`;
+    }).join("\n");
+
+    const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gradebook-${classId}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -130,7 +150,13 @@ export default function GradesPage() {
           <ArrowLeft className="w-4 h-4" />
           Back to Class
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">Gradebook</h1>
+        <div className="flex items-center justify-between mt-2">
+          <h1 className="text-2xl font-bold text-gray-900">Gradebook</h1>
+          <Button variant="secondary" size="sm" onClick={exportCSV}>
+            <Download className="w-4 h-4 mr-1" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
