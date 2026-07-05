@@ -1,5 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+
+const projectRef = "fxqdqvkhxedlcwhfjaua";
 
 function isPublicPath(pathname: string) {
   return (
@@ -14,48 +15,49 @@ function isPublicPath(pathname: string) {
 
 export async function updateSession(request: NextRequest) {
   try {
-    let supabaseResponse = NextResponse.next({ request });
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      return supabaseResponse;
+      if (!isPublicPath(request.nextUrl.pathname)) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      return NextResponse.next({ request });
     }
 
-    const supabase = createServerClient(supabaseUrl, supabaseKey, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          for (const { name, value } of cookiesToSet) {
-            request.cookies.set(name, value);
-          }
-          supabaseResponse = NextResponse.next({ request });
-          for (const { name, value, options } of cookiesToSet) {
-            supabaseResponse.cookies.set(name, value, options);
-          }
-        },
-      },
-    });
+    // Check for auth session via the access token cookie
+    const accessToken =
+      request.cookies.get(`sb-${projectRef}-auth-token`)?.value ||
+      request.cookies.get(`sb-access-token`)?.value;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let isAuthenticated = false;
 
-    if (!user && !isPublicPath(request.nextUrl.pathname)) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
+    if (accessToken) {
+      try {
+        const res = await fetch(
+          `${supabaseUrl}/auth/v1/user`,
+          {
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const data = await res.json();
+        isAuthenticated = !!data.id;
+      } catch {
+        // Auth check failed, treat as unauthenticated
+      }
     }
 
-    return supabaseResponse;
+    if (!isAuthenticated && !isPublicPath(request.nextUrl.pathname)) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    return NextResponse.next({ request });
   } catch {
     if (!isPublicPath(request.nextUrl.pathname)) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next({ request });
   }
