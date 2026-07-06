@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import StarField from "@/lib/components/StarField";
+import StarFieldCSS from "@/lib/components/StarFieldCSS";
 import ThemeInit from "@/lib/components/ThemeInit";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-surface text-[#f8f4ff]`}>
-        <StarField />
+        <StarFieldCSS />
         <ThemeInit />
         <div className="relative z-10">
           {children}
