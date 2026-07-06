@@ -118,10 +118,10 @@ export default function DashboardLayout({
                 key={item.href}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 relative ${
+                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ease-out relative active:scale-[0.99] ${
                   isActive(item.href)
                     ? "text-gold-400 bg-[rgba(212,175,55,0.1)]"
-                    : "text-[#7b6b8d] hover:text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)]"
+                    : "text-[#7b6b8d] hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px]"
                 }`}
               >
                 {isActive(item.href) && (
@@ -133,7 +133,7 @@ export default function DashboardLayout({
                     className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-gold-400 rounded-full"
                   />
                 )}
-                <item.icon className="w-5 h-5" />
+                <item.icon className="w-5 h-5 transition-all duration-300" />
                 {item.label}
               </Link>
             ))}
@@ -142,13 +142,13 @@ export default function DashboardLayout({
               <Link
                 href="/dashboard/notifications"
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ease-out active:scale-[0.99] ${
                   isActive("/dashboard/notifications")
                     ? "text-gold-400 bg-[rgba(212,175,55,0.1)]"
-                    : "text-[#7b6b8d] hover:text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)]"
+                    : "text-[#7b6b8d] hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px]"
                 }`}
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-5 h-5 transition-all duration-300" />
                 Notifications
               </Link>
             </div>
@@ -170,16 +170,16 @@ export default function DashboardLayout({
               <Link
                 href="/dashboard/settings"
                 onClick={() => setSidebarOpen(false)}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-[#9d8ab5] bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.08)] rounded-xl hover:bg-[rgba(212,175,55,0.05)] hover:border-gold-400/20 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-[#9d8ab5] bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.08)] rounded-xl transition-all duration-300 ease-out hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] active:scale-[0.99]"
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="w-4 h-4 transition-all duration-300" />
                 Settings
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl transition-all duration-300 ease-out hover:bg-[#8e2a2a] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] active:scale-[0.99]"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-4 h-4 transition-all duration-300" />
                 Logout
               </button>
             </div>

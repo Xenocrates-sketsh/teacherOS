@@ -63,11 +63,11 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-1.5 text-[#6b5b7d] hover:text-[#9d8ab5] transition-colors"
+        className="relative p-1.5 text-[#6b5b7d] rounded-xl transition-all duration-300 ease-out hover:bg-[#5353ff] hover:text-white active:scale-[0.97]"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-5 h-5 transition-all duration-300" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500/100/100/100/100/100/100/100 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -91,7 +91,7 @@ export default function NotificationBell() {
               notifications.map((n) => (
                 <div key={n.id} className={`px-4 py-3 border-b border-gray-50 last:border-0 ${!n.is_read ? "bg-[rgba(124,58,237,0.1)]" : ""}`}>
                   {n.link ? (
-                    <Link href={n.link} onClick={() => { markAsRead(n.id); setShowDropdown(false); }} className="block">
+                    <Link href={n.link} onClick={() => { markAsRead(n.id); setShowDropdown(false); }} className="block rounded-lg transition-all duration-300 ease-out hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] active:scale-[0.99] -mx-2 px-2 py-1">
                       <p className="text-sm font-medium text-[#f8f4ff]">{n.title}</p>
                       {n.message && <p className="text-xs text-[#7b6b8d] mt-0.5">{n.message}</p>}
                       <p className="text-[10px] text-[#6b5b7d] mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
@@ -110,7 +110,7 @@ export default function NotificationBell() {
           <Link
             href="/dashboard/notifications"
             onClick={() => setShowDropdown(false)}
-            className="block text-center text-xs text-gold-400 py-2.5 border-t border-[rgba(212,175,55,0.08)] hover:bg-[rgba(212,175,55,0.05)] rounded-b-xl"
+            className="block text-center text-xs text-gold-400 py-2.5 border-t border-[rgba(212,175,55,0.08)] rounded-b-xl transition-all duration-300 ease-out hover:bg-[#5353ff] hover:text-white active:scale-[0.99]"
           >
             View all notifications
           </Link>

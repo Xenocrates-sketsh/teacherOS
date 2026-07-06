@@ -25,19 +25,19 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0015] disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0015] disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]";
 
     const variants = {
       primary:
-        "btn-gold shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30",
+        "btn-gold shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30 active:shadow-gold-500/40",
       secondary:
-        "bg-surface-card text-[#f8f4ff] hover:bg-[rgba(212,175,55,0.1)] hover:text-gold-400 focus:ring-gold-400/30 border border-[rgba(212,175,55,0.08)]",
+        "bg-surface-card text-[#f8f4ff] border border-[rgba(212,175,55,0.08)] hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] focus:ring-gold-400/30",
       outline:
-        "border border-[rgba(212,175,55,0.15)] bg-[rgba(255,255,255,0.02)] text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)] hover:border-gold-400/30 focus:ring-gold-400/30",
+        "border border-[rgba(212,175,55,0.15)] bg-[rgba(255,255,255,0.02)] text-[#cbd5e1] hover:bg-[#5353ff] hover:text-white hover:border-[#5353ff] hover:-translate-y-[1px] hover:translate-x-[1px] focus:ring-gold-400/30",
       ghost:
-        "text-[#9d8ab5] hover:text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.08)] focus:ring-gold-400/30",
+        "text-[#9d8ab5] hover:bg-[#5353ff] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] focus:ring-gold-400/30",
       danger:
-        "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:border-red-500/30 focus:ring-red-500/30 shadow-sm",
+        "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-[#8e2a2a] hover:text-white hover:-translate-y-[1px] hover:translate-x-[1px] focus:ring-red-500/30",
     };
 
     const sizes = {

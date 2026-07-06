@@ -83,15 +83,15 @@ export default function StudentLayout({
               <NotificationBell />
               <Link
                 href="/student/settings"
-                className="p-2 text-[#6b5b7d] hover:text-[#9d8ab5] hover:bg-[rgba(212,175,55,0.08)] rounded-xl transition-all"
+                className="p-2 text-[#6b5b7d] rounded-xl transition-all duration-300 ease-out hover:bg-[#5353ff] hover:text-white active:scale-[0.97]"
               >
-                <Settings className="w-5 h-5" />
+                <Settings className="w-5 h-5 transition-all duration-300" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-2 text-[#6b5b7d] hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
+                className="p-2 text-[#6b5b7d] rounded-xl transition-all duration-300 ease-out hover:bg-[#8e2a2a] hover:text-white active:scale-[0.97]"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-5 h-5 transition-all duration-300" />
               </button>
               <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-gold-500/20">
                 {user?.full_name?.charAt(0) || "S"}
@@ -113,8 +113,8 @@ export default function StudentLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1 text-xs transition-all relative ${
-                  active ? "text-gold-400" : "text-[#7b6b8d] hover:text-gold-400"
+                className={`flex flex-col items-center gap-0.5 px-3 py-1 text-xs transition-all duration-300 ease-out relative active:scale-[0.97] ${
+                  active ? "text-gold-400" : "text-[#7b6b8d]"
                 }`}
               >
                 {active && (
