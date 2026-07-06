@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-surface text-[#f8f4ff]`}>
+      <body className={`${inter.className} text-[#f8f4ff]`}>
         <StarFieldCSS />
         <ThemeInit />
         <div className="relative z-10">

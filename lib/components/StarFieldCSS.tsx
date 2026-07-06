@@ -21,6 +21,13 @@ function generateStars(count: number, seed: number): string {
   return positions.join(", ");
 }
 
+const starBase: React.CSSProperties = {
+  position: "absolute",
+  left: 0,
+  top: 0,
+  borderRadius: "50%",
+};
+
 export default function StarFieldCSS() {
   const small1 = useMemo(() => generateStars(300, 42), []);
   const small2 = useMemo(() => generateStars(300, 43), []);
@@ -32,18 +39,18 @@ export default function StarFieldCSS() {
   return (
     <>
       <div
-        className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
+        className="fixed inset-0 z-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse at bottom, #2d1b4e 0%, #1a0a2e 40%, #090a0f 100%)",
         }}
       >
-        <div style={{ position: "absolute", width: 1, height: 1, borderRadius: "50%", boxShadow: small1, animation: "sd1 50s linear infinite" }} />
-        <div style={{ position: "absolute", top: 2000, width: 1, height: 1, borderRadius: "50%", boxShadow: small2, animation: "sd1 50s linear infinite" }} />
-        <div style={{ position: "absolute", width: 2, height: 2, borderRadius: "50%", boxShadow: med1, animation: "sd2 100s linear infinite" }} />
-        <div style={{ position: "absolute", top: 2000, width: 2, height: 2, borderRadius: "50%", boxShadow: med2, animation: "sd2 100s linear infinite" }} />
-        <div style={{ position: "absolute", width: 3, height: 3, borderRadius: "50%", boxShadow: large1, animation: "sd3 150s linear infinite" }} />
-        <div style={{ position: "absolute", top: 2000, width: 3, height: 3, borderRadius: "50%", boxShadow: large2, animation: "sd3 150s linear infinite" }} />
+        <div style={{ ...starBase, width: 1, height: 1, boxShadow: small1, animation: "sd1 50s linear infinite" }} />
+        <div style={{ ...starBase, top: 2000, width: 1, height: 1, boxShadow: small2, animation: "sd1 50s linear infinite" }} />
+        <div style={{ ...starBase, width: 2, height: 2, boxShadow: med1, animation: "sd2 100s linear infinite" }} />
+        <div style={{ ...starBase, top: 2000, width: 2, height: 2, boxShadow: med2, animation: "sd2 100s linear infinite" }} />
+        <div style={{ ...starBase, width: 3, height: 3, boxShadow: large1, animation: "sd3 150s linear infinite" }} />
+        <div style={{ ...starBase, top: 2000, width: 3, height: 3, boxShadow: large2, animation: "sd3 150s linear infinite" }} />
       </div>
       <style>{`
         @keyframes sd1 { from { transform: translateY(0); } to { transform: translateY(-2000px); } }
