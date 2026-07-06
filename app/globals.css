@@ -239,6 +239,75 @@ textarea:-webkit-autofill:focus {
   transform: translateX(-4px);
 }
 
+/* Add toggle button — matches settings button style */
+.add-toggle-btn {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: rgb(129, 110, 216);
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0px 0px 0px 2px rgba(212, 175, 55, 0.3);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.add-toggle-btn:hover {
+  box-shadow: 0px 0px 0px 2px rgba(212, 175, 55, 0.6);
+  background-color: rgb(140, 122, 226);
+}
+
+.add-toggle-btn .add-bar {
+  position: absolute;
+  background-color: rgb(229, 229, 229);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-toggle-btn .add-bar::before {
+  content: "";
+  width: 2px;
+  height: 2px;
+  background-color: #d4af37;
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: all 0.3s ease;
+  box-shadow: 0px 0px 5px rgba(212, 175, 55, 0.5);
+}
+
+.add-toggle-btn .add-bar-h {
+  width: 22px;
+  height: 2px;
+}
+
+.add-toggle-btn .add-bar-h::before {
+  right: -2px;
+}
+
+.add-toggle-btn .add-bar-v {
+  width: 2px;
+  height: 22px;
+}
+
+.add-toggle-btn .add-bar-v::before {
+  top: -2px;
+}
+
+.add-toggle-btn:hover .add-bar-h::before {
+  right: -10px;
+}
+
+.add-toggle-btn:hover .add-bar-v::before {
+  top: -10px;
+}
+
 /* Selection */
 ::selection {
   background: rgba(212, 175, 55, 0.3);
