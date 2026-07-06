@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import createGlobe, { type COBEOptions } from "cobe"
-import { useMotionValue, useSpring } from "motion/react"
+import { useMotionValue, useSpring } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -103,7 +103,7 @@ export function Globe({
   return (
     <div
       className={cn(
-        "absolute inset-0 mx-auto aspect-square w-full max-w-150",
+        "absolute inset-0 mx-auto aspect-square w-full max-w-lg",
         className
       )}
     >
