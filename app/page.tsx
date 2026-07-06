@@ -15,6 +15,7 @@ import {
   Zap,
   Shield,
 } from "lucide-react";
+import { Globe } from "@/app/components/magicui/globe";
 
 const features = [
   {
@@ -208,6 +209,28 @@ export default function Home() {
               </span>
             </Link>
           </motion.div>
+        </section>
+
+        <section className="relative py-16 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              className="relative flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="relative size-full max-w-lg aspect-square">
+                <Globe className="top-16" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_150%,rgba(10,0,21,0.8),rgba(10,0,21,1))]" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="bg-gradient-to-b from-gold-400 via-amber-300 to-transparent bg-clip-text text-center text-5xl md:text-7xl leading-none font-bold text-transparent select-none">
+                  Global
+                </span>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         <section className="max-w-7xl mx-auto px-6 py-20">
