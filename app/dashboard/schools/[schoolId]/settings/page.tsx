@@ -76,7 +76,7 @@ export default function SchoolSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading settings...</div>
+        <div className="text-[#7b6b8d]">Loading settings...</div>
       </div>
     );
   }
@@ -86,11 +86,11 @@ export default function SchoolSettingsPage() {
       <div className="mb-8">
         <Link
           href={`/dashboard/schools/${schoolId}`}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to School
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mt-2">
           School Settings
         </h1>
       </div>
@@ -99,8 +99,8 @@ export default function SchoolSettingsPage() {
         <div
           className={`mb-6 p-4 rounded-md ${
             message.type === "success"
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-green-500/100/100/100/100/100/100/100/10 text-green-400"
+              : "bg-red-500/100/100/100/100/100/100/10 text-red-700"
           }`}
         >
           {message.text}
@@ -108,16 +108,16 @@ export default function SchoolSettingsPage() {
       )}
 
       {/* School Name */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             School Information
           </h3>
           <form onSubmit={handleSave} className="space-y-4">
             <div>
               <label
                 htmlFor="schoolName"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 School Name
               </label>
@@ -126,14 +126,14 @@ export default function SchoolSettingsPage() {
                 type="text"
                 value={schoolName}
                 onChange={(e) => setSchoolName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm"
               />
             </div>
             <div>
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -143,31 +143,31 @@ export default function SchoolSettingsPage() {
       </div>
 
       {/* Teachers */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             Teachers ({teachers.length})
           </h3>
           {teachers.length === 0 ? (
-            <p className="text-sm text-gray-500">No teachers yet.</p>
+            <p className="text-sm text-[#7b6b8d]">No teachers yet.</p>
           ) : (
             <div className="space-y-3">
               {teachers.map((teacher) => (
                 <div
                   key={teacher.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-surface rounded-lg"
                 >
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-[#f8f4ff]">
                       {teacher.full_name}
                     </p>
-                    <p className="text-xs text-gray-500">{teacher.email}</p>
+                    <p className="text-xs text-[#7b6b8d]">{teacher.email}</p>
                   </div>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       teacher.role === "admin"
-                        ? "bg-primary-100 text-primary-800"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-[rgba(124,58,237,0.1)] text-gold-400"
+                        : "bg-surface-card text-gray-800"
                     }`}
                   >
                     {teacher.role === "admin" ? "Admin" : "Teacher"}
@@ -180,10 +180,10 @@ export default function SchoolSettingsPage() {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-white shadow rounded-lg border border-red-200">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg border border-red-200">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg font-medium text-red-800 mb-4">Danger Zone</h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-[#9d8ab5] mb-4">
             Deleting this school will permanently remove all classes, workspaces,
             and content associated with it.
           </p>

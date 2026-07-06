@@ -84,7 +84,7 @@ export default function AttendancePage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading attendance...</div></div>;
+    return <div className="flex items-center justify-center h-64"><div className="text-[#7b6b8d]">Loading attendance...</div></div>;
   }
 
   return (
@@ -92,13 +92,13 @@ export default function AttendancePage() {
       <div>
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to {className}
         </Link>
         <div className="flex items-center justify-between mt-2">
-          <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
+          <h1 className="text-2xl font-bold text-[#f8f4ff]">Attendance</h1>
           <Button loading={creating} onClick={startNewSession}>
             <Plus className="w-4 h-4 mr-1" />
             Take Attendance
@@ -107,10 +107,10 @@ export default function AttendancePage() {
       </div>
 
       {sessions.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+        <div className="glass-card p-12 text-center">
           <CheckCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No attendance sessions yet</h3>
-          <p className="text-gray-500">Start taking attendance for today.</p>
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-2">No attendance sessions yet</h3>
+          <p className="text-[#7b6b8d]">Start taking attendance for today.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -121,12 +121,12 @@ export default function AttendancePage() {
               <Link
                 key={session.id}
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/attendance/${session.id}`}
-                className="block bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow"
+                className="block glass-card p-5 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">{new Date(session.date).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
-                    <p className="text-sm text-gray-500 mt-1">{marked} of {session.total_students} marked ({completion}%)</p>
+                    <p className="font-medium text-[#f8f4ff]">{new Date(session.date).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p className="text-sm text-[#7b6b8d] mt-1">{marked} of {session.total_students} marked ({completion}%)</p>
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className="flex items-center gap-1 text-green-600"><CheckCircle className="w-4 h-4" />{session.total_present}</span>
@@ -135,8 +135,8 @@ export default function AttendancePage() {
                     <span className="flex items-center gap-1 text-blue-600"><AlertTriangle className="w-4 h-4" />{session.total_excused}</span>
                   </div>
                 </div>
-                <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
-                  <div className="bg-primary-500 h-1.5 rounded-full transition-all" style={{ width: `${completion}%` }} />
+                <div className="mt-3 w-full bg-surface-card rounded-full h-1.5">
+                  <div className="bg-gradient-to-br from-gold-500 to-gold-400 h-1.5 rounded-full transition-all" style={{ width: `${completion}%` }} />
                 </div>
               </Link>
             );

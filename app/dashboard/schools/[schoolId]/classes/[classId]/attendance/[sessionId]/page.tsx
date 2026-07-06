@@ -81,7 +81,7 @@ export default function AttendanceSessionPage() {
   } as const;
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading...</div></div>;
+    return <div className="flex items-center justify-center h-64"><div className="text-[#7b6b8d]">Loading...</div></div>;
   }
 
   const markedCount = students.filter((s) => s.status).length;
@@ -91,17 +91,17 @@ export default function AttendanceSessionPage() {
       <div>
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}/attendance`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Attendance
         </Link>
         <div className="flex items-center justify-between mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[#f8f4ff]">
               {session?.date ? new Date(session.date).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "Attendance"}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[#7b6b8d] mt-1">
               {markedCount} of {students.length} marked
             </p>
           </div>
@@ -112,8 +112,8 @@ export default function AttendanceSessionPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex gap-2 flex-wrap">
+      <div className="glass-card overflow-hidden">
+        <div className="p-4 border-b border-[rgba(212,175,55,0.08)] flex gap-2 flex-wrap">
           {(["present", "absent", "late", "excused"] as const).map((status) => {
             const Icon = statusColors[status].icon;
             return (
@@ -139,12 +139,12 @@ export default function AttendanceSessionPage() {
 
         <div className="divide-y divide-gray-100">
           {students.map((student) => (
-            <div key={student.student_id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+            <div key={student.student_id} className="flex items-center justify-between px-4 py-3 hover:bg-[rgba(212,175,55,0.05)]">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 text-sm font-medium">
+                <div className="w-8 h-8 bg-surface-card rounded-full flex items-center justify-center text-[#9d8ab5] text-sm font-medium">
                   {student.full_name.charAt(0)}
                 </div>
-                <span className="text-sm font-medium text-gray-900">{student.full_name}</span>
+                <span className="text-sm font-medium text-[#f8f4ff]">{student.full_name}</span>
               </div>
               <div className="flex gap-1">
                 {(["present", "absent", "late", "excused"] as const).map((status) => {
@@ -157,7 +157,7 @@ export default function AttendanceSessionPage() {
                       className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                         active
                           ? colors.bg
-                          : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                          : "text-[#6b5b7d] hover:text-[#9d8ab5] hover:bg-[rgba(212,175,55,0.05)]"
                       }`}
                     >
                       {status === "present" ? "P" : status === "absent" ? "A" : status === "late" ? "L" : "E"}

@@ -63,22 +63,22 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-1.5 text-gray-400 hover:text-gray-600 transition-colors"
+        className="relative p-1.5 text-[#6b5b7d] hover:text-[#9d8ab5] transition-colors"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500/100/100/100/100/100/100/100 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+        <div className="absolute right-0 mt-2 w-80 bg-surface-elevated rounded-xl shadow-glass-lg border border-[rgba(212,175,55,0.15)] z-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(212,175,55,0.08)]">
+            <h3 className="text-sm font-semibold text-[#f8f4ff]">Notifications</h3>
             {unreadCount > 0 && (
-              <button onClick={markAllRead} className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1">
+              <button onClick={markAllRead} className="text-xs link-gold flex items-center gap-1">
                 <CheckCheck className="w-3.5 h-3.5" />
                 Mark all read
               </button>
@@ -86,21 +86,21 @@ export default function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="py-8 text-center text-sm text-gray-500">No notifications yet</div>
+              <div className="py-8 text-center text-sm text-[#7b6b8d]">No notifications yet</div>
             ) : (
               notifications.map((n) => (
-                <div key={n.id} className={`px-4 py-3 border-b border-gray-50 last:border-0 ${!n.is_read ? "bg-primary-50/50" : ""}`}>
+                <div key={n.id} className={`px-4 py-3 border-b border-gray-50 last:border-0 ${!n.is_read ? "bg-[rgba(124,58,237,0.1)]" : ""}`}>
                   {n.link ? (
                     <Link href={n.link} onClick={() => { markAsRead(n.id); setShowDropdown(false); }} className="block">
-                      <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                      {n.message && <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>}
-                      <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                      <p className="text-sm font-medium text-[#f8f4ff]">{n.title}</p>
+                      {n.message && <p className="text-xs text-[#7b6b8d] mt-0.5">{n.message}</p>}
+                      <p className="text-[10px] text-[#6b5b7d] mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
                     </Link>
                   ) : (
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                      {n.message && <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>}
-                      <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                      <p className="text-sm font-medium text-[#f8f4ff]">{n.title}</p>
+                      {n.message && <p className="text-xs text-[#7b6b8d] mt-0.5">{n.message}</p>}
+                      <p className="text-[10px] text-[#6b5b7d] mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
                     </div>
                   )}
                 </div>
@@ -110,7 +110,7 @@ export default function NotificationBell() {
           <Link
             href="/dashboard/notifications"
             onClick={() => setShowDropdown(false)}
-            className="block text-center text-xs text-primary-600 py-2.5 border-t border-gray-100 hover:bg-gray-50 rounded-b-xl"
+            className="block text-center text-xs text-gold-400 py-2.5 border-t border-[rgba(212,175,55,0.08)] hover:bg-[rgba(212,175,55,0.05)] rounded-b-xl"
           >
             View all notifications
           </Link>

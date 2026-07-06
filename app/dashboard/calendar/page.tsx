@@ -86,7 +86,7 @@ export default function TeacherCalendarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading calendar...</div>
+        <div className="text-[#7b6b8d]">Loading calendar...</div>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function TeacherCalendarPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Calendar</h1>
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">Calendar</h1>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Event
@@ -121,7 +121,7 @@ export default function TeacherCalendarPage() {
             required
           />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#cbd5e1] mb-1">
               Type
             </label>
             <select
@@ -132,7 +132,7 @@ export default function TeacherCalendarPage() {
                   event_type: e.target.value as any,
                 })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500"
+              className="w-full rounded-lg border border-[rgba(212,175,55,0.15)] px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500"
             >
               <option value="class">Class</option>
               <option value="homework_due">Homework Due</option>
@@ -142,7 +142,7 @@ export default function TeacherCalendarPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#cbd5e1] mb-1">
               Class
             </label>
             <select
@@ -151,7 +151,7 @@ export default function TeacherCalendarPage() {
                 setNewEvent({ ...newEvent, class_id: e.target.value })
               }
               required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500"
+              className="w-full rounded-lg border border-[rgba(212,175,55,0.15)] px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500"
             >
               <option value="">Select a class</option>
               {classes.map((cls) => (
@@ -201,21 +201,21 @@ export default function TeacherCalendarPage() {
       >
         {selectedEvent && (
           <div className="space-y-3">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#9d8ab5]">
               <strong>Type:</strong> {selectedEvent.event_type}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#9d8ab5]">
               <strong>Start:</strong>{" "}
               {new Date(selectedEvent.start_time).toLocaleString()}
             </p>
             {selectedEvent.end_time && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#9d8ab5]">
                 <strong>End:</strong>{" "}
                 {new Date(selectedEvent.end_time).toLocaleString()}
               </p>
             )}
             {selectedEvent.description && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#9d8ab5]">
                 <strong>Description:</strong> {selectedEvent.description}
               </p>
             )}

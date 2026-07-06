@@ -56,7 +56,7 @@ export default function StudentWorkspacePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading workspace...</div>
+        <div className="text-[#7b6b8d]">Loading workspace...</div>
       </div>
     );
   }
@@ -73,18 +73,18 @@ export default function StudentWorkspacePage() {
       <div className="mb-8">
         <Link
           href={`/student/classes/${classId}`}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to Class
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mt-2">
           {workspace?.name}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">{workspace?.subject}</p>
+        <p className="mt-1 text-sm text-[#7b6b8d]">{workspace?.subject}</p>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-[rgba(212,175,55,0.1)] mb-6">
         <nav className="-mb-px flex space-x-8 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
@@ -92,8 +92,8 @@ export default function StudentWorkspacePage() {
               onClick={() => setActiveTab(tab.id)}
               className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.id
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-gold-500 text-gold-400"
+                  : "border-transparent text-[#7b6b8d] hover:text-[#cbd5e1] hover:border-[rgba(212,175,55,0.15)]"
               }`}
             >
               {tab.label}
@@ -101,8 +101,8 @@ export default function StudentWorkspacePage() {
                 <span
                   className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
                     activeTab === tab.id
-                      ? "bg-primary-100 text-primary-600"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-[rgba(212,175,55,0.15)] text-gold-400"
+                      : "bg-surface-card text-[#9d8ab5]"
                   }`}
                 >
                   {tab.count}
@@ -119,23 +119,23 @@ export default function StudentWorkspacePage() {
         {activeTab === "lessons" && (
           <div>
             {lessons.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No lessons yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No lessons yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {lessons.map((lesson) => (
                   <div
                     key={lesson.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
-                    <h3 className="text-lg font-medium text-gray-900">
+                    <h3 className="text-lg font-medium text-[#f8f4ff]">
                       {lesson.title}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+                    <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap">
                       {lesson.content}
                     </p>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       {new Date(lesson.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -149,22 +149,22 @@ export default function StudentWorkspacePage() {
         {activeTab === "homework" && (
           <div>
             {homework.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No homework yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No homework yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {homework.map((hw) => (
                   <div
                     key={hw.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-lg font-medium text-[#f8f4ff]">
                           {hw.title}
                         </h3>
-                        <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+                        <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap">
                           {hw.description}
                         </p>
                       </div>
@@ -183,7 +183,7 @@ export default function StudentWorkspacePage() {
                         </div>
                       )}
                     </div>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       Posted{" "}
                       {new Date(hw.created_at).toLocaleDateString()}
                     </p>
@@ -198,23 +198,23 @@ export default function StudentWorkspacePage() {
         {activeTab === "announcements" && (
           <div>
             {announcements.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No announcements yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No announcements yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {announcements.map((announcement) => (
                   <div
                     key={announcement.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
-                    <h3 className="text-lg font-medium text-gray-900">
+                    <h3 className="text-lg font-medium text-[#f8f4ff]">
                       {announcement.title}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+                    <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap">
                       {announcement.content}
                     </p>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       {new Date(announcement.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -228,21 +228,21 @@ export default function StudentWorkspacePage() {
         {activeTab === "resources" && (
           <div>
             {resources.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No resources yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No resources yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {resources.map((resource) => (
                   <div
                     key={resource.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         {resource.type === "file" ? (
                           <svg
-                            className="h-8 w-8 text-gray-400"
+                            className="h-8 w-8 text-[#6b5b7d]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -256,7 +256,7 @@ export default function StudentWorkspacePage() {
                           </svg>
                         ) : (
                           <svg
-                            className="h-8 w-8 text-gray-400"
+                            className="h-8 w-8 text-[#6b5b7d]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -271,10 +271,10 @@ export default function StudentWorkspacePage() {
                         )}
                       </div>
                       <div className="ml-4 flex-1">
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <h3 className="text-lg font-medium text-[#f8f4ff]">
                           {resource.title}
                         </h3>
-                        <p className="text-sm text-gray-500 capitalize">
+                        <p className="text-sm text-[#7b6b8d] capitalize">
                           {resource.type === "file" ? "File" : "Link"}
                         </p>
                       </div>
@@ -284,7 +284,7 @@ export default function StudentWorkspacePage() {
                             href={resource.file_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-4 py-2 border border-[rgba(212,175,55,0.15)] shadow-sm text-sm font-medium rounded-md text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]"
                           >
                             Download
                           </a>
@@ -293,7 +293,7 @@ export default function StudentWorkspacePage() {
                             href={resource.link_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-4 py-2 border border-[rgba(212,175,55,0.15)] shadow-sm text-sm font-medium rounded-md text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]"
                           >
                             Open Link
                           </a>

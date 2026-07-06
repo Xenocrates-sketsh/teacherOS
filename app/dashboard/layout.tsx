@@ -51,7 +51,7 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
@@ -66,7 +66,7 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 lg:hidden"
@@ -75,18 +75,18 @@ export default function DashboardLayout({
       )}
 
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-surface-card/80 backdrop-blur-xl border-r border-[rgba(212,175,55,0.1)] transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100">
+          <div className="flex items-center justify-between h-16 px-4 border-b border-[rgba(212,175,55,0.08)]">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <GraduationCap className="w-7 h-7 text-primary-600" />
-              <span className="text-lg font-bold text-gray-900">TW</span>
+              <GraduationCap className="w-7 h-7 text-gold-400" />
+              <span className="text-lg font-bold text-[#f8f4ff]">TW</span>
             </Link>
             <button
-              className="lg:hidden text-gray-400 hover:text-gray-600"
+              className="lg:hidden text-[#6b5b7d] hover:text-[#9d8ab5]"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />
@@ -98,7 +98,7 @@ export default function DashboardLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#9d8ab5] rounded-lg hover:bg-[rgba(212,175,55,0.08)] hover:text-[#f8f4ff] transition-colors"
               >
                 <item.icon className="w-5 h-5" />
                 {item.label}
@@ -106,36 +106,36 @@ export default function DashboardLayout({
             ))}
             <Link
               href="/dashboard/notifications"
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#9d8ab5] rounded-lg hover:bg-[rgba(212,175,55,0.08)] hover:text-[#f8f4ff] transition-colors"
             >
               <Bell className="w-5 h-5" />
               Notifications
             </Link>
           </nav>
 
-          <div className="border-t border-gray-100 p-4">
+          <div className="border-t border-[rgba(212,175,55,0.08)] p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-9 w-9 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-medium">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center text-white text-sm font-medium">
                 {user?.full_name?.charAt(0) || "T"}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-[#f8f4ff] truncate">
                   {user?.full_name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                <p className="text-xs text-[#7b6b8d] truncate">{user?.email}</p>
               </div>
             </div>
             <div className="flex gap-2">
               <Link
                 href="/dashboard/settings"
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-[#9d8ab5] bg-surface-card rounded-lg hover:bg-gray-200 transition-colors"
               >
                 <Settings className="w-4 h-4" />
                 Settings
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-red-600 bg-red-500/100/100/100/100/100/100/10 rounded-lg hover:bg-red-100 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -146,17 +146,17 @@ export default function DashboardLayout({
       </div>
 
       <div className="lg:pl-64">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 lg:hidden">
+        <div className="sticky top-0 z-10 bg-surface-card/90 backdrop-blur-xl border-b border-[rgba(212,175,55,0.08)] lg:hidden">
           <div className="flex items-center justify-between h-14 px-4">
             <button
-              className="text-gray-500 hover:text-gray-700"
+              className="text-[#7b6b8d] hover:text-[#cbd5e1]"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="w-6 h-6" />
             </button>
             <div className="flex items-center gap-2">
-              <GraduationCap className="w-6 h-6 text-primary-600" />
-              <span className="font-semibold text-gray-900">
+              <GraduationCap className="w-6 h-6 text-gold-400" />
+              <span className="font-semibold text-[#f8f4ff]">
                 Teacher Workspace
               </span>
             </div>

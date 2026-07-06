@@ -37,13 +37,13 @@ export default function MessageInput({
         onKeyDown={handleKeyDown}
         placeholder="Type a message..."
         rows={1}
-        className="flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 max-h-32"
+        className="flex-1 resize-none rounded-xl border border-[rgba(212,175,55,0.1)] px-4 py-2 text-sm focus:ring-2 focus:ring-gold-500 focus:border-gold-500 max-h-32"
         disabled={disabled}
       />
       <button
         type="submit"
         disabled={!content.trim() || disabled}
-        className="p-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="p-2 btn-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Send className="w-5 h-5" />
       </button>

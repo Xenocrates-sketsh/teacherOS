@@ -68,10 +68,10 @@ export default function StudentJoinPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">Join a Class</h1>
-      <p className="text-gray-500 mb-6">Enter the class code from your teacher.</p>
+      <h1 className="text-2xl font-bold text-[#f8f4ff] mb-4">Join a Class</h1>
+      <p className="text-[#7b6b8d] mb-6">Enter the class code from your teacher.</p>
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6">
         <form onSubmit={handleJoin} className="space-y-4">
           <div>
             <input
@@ -80,18 +80,18 @@ export default function StudentJoinPage() {
               value={classCode}
               onChange={(e) => setClassCode(e.target.value.toUpperCase())}
               placeholder="e.g., ABC123"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 border border-[rgba(212,175,55,0.15)] rounded-md text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-gold-500"
             />
           </div>
 
           {error && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
+            <div className="text-red-600 text-sm bg-red-500/100/100/100/100/100/100/10 p-3 rounded-md">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="text-green-600 text-sm bg-green-50 p-3 rounded-md">
+            <div className="text-green-600 text-sm bg-green-500/100/100/100/100/100/100/10 p-3 rounded-md">
               {success}
             </div>
           )}
@@ -99,7 +99,7 @@ export default function StudentJoinPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+            className="w-full py-3 btn-gold disabled:opacity-50"
           >
             {loading ? "Joining..." : "Join Class"}
           </button>

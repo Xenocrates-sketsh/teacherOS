@@ -28,20 +28,20 @@ export default function StudentMessagesPage() {
   if (loading || !userId) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] glass-card overflow-hidden">
       <div
-        className={`w-80 border-r border-gray-100 flex flex-col ${
+        className={`w-80 border-r border-[rgba(212,175,55,0.08)] flex flex-col ${
           conversationId ? "hidden md:flex" : "flex"
         }`}
       >
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
+        <div className="p-4 border-b border-[rgba(212,175,55,0.08)]">
+          <h2 className="text-lg font-semibold text-[#f8f4ff]">Messages</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
           <ConversationList
@@ -60,7 +60,7 @@ export default function StudentMessagesPage() {
         {conversationId ? (
           <ChatView conversationId={conversationId} userId={userId} />
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
+          <div className="flex-1 flex items-center justify-center text-[#7b6b8d]">
             Select a conversation to start chatting
           </div>
         )}

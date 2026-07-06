@@ -96,7 +96,7 @@ export default function StudentReportPage() {
   })();
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading report...</div></div>;
+    return <div className="flex items-center justify-center h-64"><div className="text-[#7b6b8d]">Loading report...</div></div>;
   }
 
   return (
@@ -104,7 +104,7 @@ export default function StudentReportPage() {
       <div className="flex items-center justify-between no-print">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
@@ -115,29 +115,29 @@ export default function StudentReportPage() {
         </Button>
       </div>
 
-      <div ref={printRef} className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <div ref={printRef} className="glass-card p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Progress Report</h1>
-          <p className="text-gray-500 mt-1">Teacher Workspace</p>
+          <h1 className="text-2xl font-bold text-[#f8f4ff]">Progress Report</h1>
+          <p className="text-[#7b6b8d] mt-1">Teacher Workspace</p>
         </div>
 
-        <div className="border-t border-b border-gray-200 py-4 mb-6">
+        <div className="border-t border-b border-[rgba(212,175,55,0.1)] py-4 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-500 uppercase">Student Name</p>
-              <p className="font-medium text-gray-900">{student?.full_name}</p>
+              <p className="text-xs text-[#7b6b8d] uppercase">Student Name</p>
+              <p className="font-medium text-[#f8f4ff]">{student?.full_name}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Student ID</p>
-              <p className="font-medium text-gray-900">{student?.student_id}</p>
+              <p className="text-xs text-[#7b6b8d] uppercase">Student ID</p>
+              <p className="font-medium text-[#f8f4ff]">{student?.student_id}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Email</p>
-              <p className="font-medium text-gray-900">{student?.email}</p>
+              <p className="text-xs text-[#7b6b8d] uppercase">Email</p>
+              <p className="font-medium text-[#f8f4ff]">{student?.email}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Overall Average</p>
-              <p className={`font-medium text-lg ${overallAverage !== null ? (overallAverage >= 70 ? "text-green-600" : overallAverage >= 50 ? "text-yellow-600" : "text-red-600") : "text-gray-400"}`}>
+              <p className="text-xs text-[#7b6b8d] uppercase">Overall Average</p>
+              <p className={`font-medium text-lg ${overallAverage !== null ? (overallAverage >= 70 ? "text-green-600" : overallAverage >= 50 ? "text-yellow-600" : "text-red-600") : "text-[#6b5b7d]"}`}>
                 {overallAverage !== null ? `${overallAverage}%` : "N/A"}
               </p>
             </div>
@@ -145,29 +145,29 @@ export default function StudentReportPage() {
         </div>
 
         {grades.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">No grades recorded yet.</div>
+          <div className="text-center py-8 text-[#7b6b8d]">No grades recorded yet.</div>
         ) : (
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 text-xs font-medium text-gray-500 uppercase">Class</th>
-                <th className="text-left py-3 text-xs font-medium text-gray-500 uppercase">Workspace</th>
-                <th className="text-left py-3 text-xs font-medium text-gray-500 uppercase">Assignment</th>
-                <th className="text-center py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="text-right py-3 text-xs font-medium text-gray-500 uppercase">Score</th>
+              <tr className="border-b border-[rgba(212,175,55,0.1)]">
+                <th className="text-left py-3 text-xs font-medium text-[#7b6b8d] uppercase">Class</th>
+                <th className="text-left py-3 text-xs font-medium text-[#7b6b8d] uppercase">Workspace</th>
+                <th className="text-left py-3 text-xs font-medium text-[#7b6b8d] uppercase">Assignment</th>
+                <th className="text-center py-3 text-xs font-medium text-[#7b6b8d] uppercase">Status</th>
+                <th className="text-right py-3 text-xs font-medium text-[#7b6b8d] uppercase">Score</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {grades.map((g, i) => (
                 <tr key={i}>
-                  <td className="py-3 text-sm text-gray-900">{g.class_name}</td>
-                  <td className="py-3 text-sm text-gray-600">{g.workspace_name}</td>
-                  <td className="py-3 text-sm text-gray-900">{g.homework_title}</td>
+                  <td className="py-3 text-sm text-[#f8f4ff]">{g.class_name}</td>
+                  <td className="py-3 text-sm text-[#9d8ab5]">{g.workspace_name}</td>
+                  <td className="py-3 text-sm text-[#f8f4ff]">{g.homework_title}</td>
                   <td className="py-3 text-center">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                       g.graded ? "bg-green-100 text-green-700" :
                       g.submitted ? "bg-yellow-100 text-yellow-700" :
-                      "bg-gray-100 text-gray-600"
+                      "bg-surface-card text-[#9d8ab5]"
                     }`}>
                       {g.graded ? "Graded" : g.submitted ? "Submitted" : "Not Submitted"}
                     </span>
@@ -178,7 +178,7 @@ export default function StudentReportPage() {
                         {g.score} / {g.max_score}
                       </span>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-[#6b5b7d]">—</span>
                     )}
                   </td>
                 </tr>
@@ -187,7 +187,7 @@ export default function StudentReportPage() {
           </table>
         )}
 
-        <div className="mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
+        <div className="mt-8 pt-6 border-t border-[rgba(212,175,55,0.1)] text-center text-xs text-[#6b5b7d]">
           Generated on {new Date().toLocaleDateString()} · Teacher Workspace
         </div>
       </div>

@@ -86,7 +86,7 @@ export default function ClassSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading settings...</div>
+        <div className="text-[#7b6b8d]">Loading settings...</div>
       </div>
     );
   }
@@ -96,11 +96,11 @@ export default function ClassSettingsPage() {
       <div className="mb-8">
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}`}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to Class
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mt-2">
           Class Settings
         </h1>
       </div>
@@ -109,8 +109,8 @@ export default function ClassSettingsPage() {
         <div
           className={`mb-6 p-4 rounded-md ${
             message.type === "success"
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-green-500/100/100/100/100/100/100/100/10 text-green-400"
+              : "bg-red-500/100/100/100/100/100/100/10 text-red-700"
           }`}
         >
           {message.text}
@@ -118,16 +118,16 @@ export default function ClassSettingsPage() {
       )}
 
       {/* Class Name */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             Class Information
           </h3>
           <form onSubmit={handleSave} className="space-y-4">
             <div>
               <label
                 htmlFor="className"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 Class Name
               </label>
@@ -136,14 +136,14 @@ export default function ClassSettingsPage() {
                 type="text"
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm"
               />
             </div>
             <div>
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -153,12 +153,12 @@ export default function ClassSettingsPage() {
       </div>
 
       {/* Archive */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             {archived ? "Archived Class" : "Archive Class"}
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-[#9d8ab5] mb-4">
             {archived
               ? "This class is archived. It is hidden from the main dashboard but all content is preserved."
               : "Archiving this class will hide it from the main dashboard. All content is preserved."}
@@ -188,13 +188,13 @@ export default function ClassSettingsPage() {
       </div>
 
       {/* Students */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             Students ({students.length})
           </h3>
           {students.length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#7b6b8d]">
               No students enrolled yet. Share the class code to invite students.
             </p>
           ) : (
@@ -202,16 +202,16 @@ export default function ClassSettingsPage() {
               {students.map((student) => (
                 <div
                   key={student.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-surface rounded-lg"
                 >
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-[#f8f4ff]">
                       {student.full_name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[#7b6b8d]">
                       {student.email} · ID: {student.student_id}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-[#6b5b7d]">
                       Joined {new Date(student.joined_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -229,10 +229,10 @@ export default function ClassSettingsPage() {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-white shadow rounded-lg border border-red-200">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg border border-red-200">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg font-medium text-red-800 mb-4">Danger Zone</h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-[#9d8ab5] mb-4">
             Deleting this class will permanently remove all workspaces, lessons,
             homework, and other content.
           </p>

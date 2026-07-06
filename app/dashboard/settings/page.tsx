@@ -87,7 +87,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading settings...</div>
+        <div className="text-[#7b6b8d]">Loading settings...</div>
       </div>
     );
   }
@@ -95,8 +95,8 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">Settings</h1>
+        <p className="mt-1 text-sm text-[#7b6b8d]">
           Manage your account settings.
         </p>
       </div>
@@ -105,8 +105,8 @@ export default function SettingsPage() {
         <div
           className={`mb-6 p-4 rounded-md ${
             message.type === "success"
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-green-500/100/100/100/100/100/100/100/10 text-green-400"
+              : "bg-red-500/100/100/100/100/100/100/10 text-red-700"
           }`}
         >
           {message.text}
@@ -114,16 +114,16 @@ export default function SettingsPage() {
       )}
 
       {/* Profile Section */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             Profile Information
           </h3>
           <form onSubmit={handleSave} className="space-y-4">
             <div>
               <label
                 htmlFor="fullName"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 Full Name
               </label>
@@ -132,13 +132,13 @@ export default function SettingsPage() {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm"
               />
             </div>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 Email
               </label>
@@ -147,9 +147,9 @@ export default function SettingsPage() {
                 type="email"
                 value={email}
                 disabled
-                className="mt-1 block w-full border border-gray-200 rounded-md shadow-sm py-2 px-3 bg-gray-50 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.1)] rounded-md shadow-sm py-2 px-3 bg-surface sm:text-sm"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[#7b6b8d]">
                 Email cannot be changed
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -167,16 +167,16 @@ export default function SettingsPage() {
       </div>
 
       {/* Password Section */}
-      <div className="bg-white shadow rounded-lg">
+      <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-4">
             Change Password
           </h3>
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div>
               <label
                 htmlFor="newPassword"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 New Password
               </label>
@@ -185,13 +185,13 @@ export default function SettingsPage() {
                 name="newPassword"
                 type="password"
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm"
               />
             </div>
             <div>
               <label
                 htmlFor="confirmNewPassword"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-[#cbd5e1]"
               >
                 Confirm New Password
               </label>
@@ -200,14 +200,14 @@ export default function SettingsPage() {
                 name="confirmNewPassword"
                 type="password"
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 block w-full border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm"
               />
             </div>
             <div>
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50"
               >
                 {saving ? "Updating..." : "Update Password"}
               </button>

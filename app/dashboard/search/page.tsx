@@ -85,65 +85,65 @@ export default function SearchPage() {
       resource: { icon: FileText, color: "text-purple-500" },
     };
     const Icon = icons[type]?.icon || FileText;
-    return <Icon className={`h-5 w-5 ${icons[type]?.color || "text-gray-500"}`} />;
+    return <Icon className={`h-5 w-5 ${icons[type]?.color || "text-[#7b6b8d]"}`} />;
   };
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Search</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">Search</h1>
+        <p className="mt-1 text-sm text-[#7b6b8d]">
           Search across all your lessons, homework, announcements, and resources.
         </p>
       </div>
 
       <div className="relative mb-8">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6b5b7d]" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Start typing to search..."
-          className="block w-full border border-gray-300 rounded-lg shadow-sm py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+          className="block w-full border border-[rgba(212,175,55,0.15)] rounded-lg shadow-sm py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500 text-sm"
           autoFocus
         />
         {loading && (
-          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 animate-spin" />
+          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6b5b7d] animate-spin" />
         )}
       </div>
 
       {searched && (
         <div>
           {results.length > 0 && (
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-[#7b6b8d] mb-4">
               {results.length} result{results.length !== 1 ? "s" : ""} found
             </p>
           )}
 
           {results.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
               <Search className="mx-auto h-12 w-12 text-gray-300" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No results found</h3>
-              <p className="mt-1 text-sm text-gray-500">Try a different search term.</p>
+              <h3 className="mt-2 text-sm font-medium text-[#f8f4ff]">No results found</h3>
+              <p className="mt-1 text-sm text-[#7b6b8d]">Try a different search term.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {results.map((result) => (
                 <div
                   key={`${result.type}-${result.id}`}
-                  className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+                  className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">{getTypeIcon(result.type)}</div>
                     <div className="ml-4 flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">{result.title}</h3>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 capitalize">
+                        <h3 className="text-lg font-medium text-[#f8f4ff]">{result.title}</h3>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-card text-gray-800 capitalize">
                           {result.type}
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">{result.content}</p>
-                      <div className="mt-2 flex items-center text-xs text-gray-500">
+                      <p className="mt-1 text-sm text-[#9d8ab5] line-clamp-2">{result.content}</p>
+                      <div className="mt-2 flex items-center text-xs text-[#7b6b8d]">
                         <span>{new Date(result.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
@@ -156,9 +156,9 @@ export default function SearchPage() {
       )}
 
       {!searched && (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
+        <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-12 text-center">
           <Search className="mx-auto h-12 w-12 text-gray-200" />
-          <h3 className="mt-2 text-sm font-medium text-gray-500">Type something to search</h3>
+          <h3 className="mt-2 text-sm font-medium text-[#7b6b8d]">Type something to search</h3>
         </div>
       )}
     </div>

@@ -46,7 +46,7 @@ export default function StudentLayout({
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
@@ -63,30 +63,30 @@ export default function StudentLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
-      <div className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-surface pb-16 md:pb-0">
+      <div className="bg-surface-card/90 backdrop-blur-xl border-b border-[rgba(212,175,55,0.08)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <Link href="/student" className="flex items-center gap-2">
-              <GraduationCap className="w-6 h-6 text-primary-600" />
-              <span className="text-lg font-bold text-gray-900">TW</span>
+              <GraduationCap className="w-6 h-6 text-gold-400" />
+              <span className="text-lg font-bold text-[#f8f4ff]">TW</span>
             </Link>
             <div className="flex items-center gap-2">
               <DarkModeToggle />
               <NotificationBell />
               <Link
                 href="/student/settings"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[#6b5b7d] hover:text-[#9d8ab5] transition-colors"
               >
                 <Settings className="w-5 h-5" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-gray-400 hover:text-red-600 transition-colors"
+                className="text-[#6b5b7d] hover:text-red-600 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
               </button>
-              <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-medium">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-gold-500 to-gold-400 flex items-center justify-center text-white text-sm font-medium">
                 {user?.full_name?.charAt(0) || "S"}
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function StudentLayout({
         {children}
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-20 bg-surface-card/80 backdrop-blur-xl border-t border-[rgba(212,175,55,0.1)] md:hidden">
         <div className="flex items-center justify-around h-16">
           {bottomNav.map((item) => (
             <Link
@@ -106,8 +106,8 @@ export default function StudentLayout({
               href={item.href}
               className={`flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors ${
                 isActive(item.href)
-                  ? "text-primary-600"
-                  : "text-gray-500 hover:text-primary-600"
+                  ? "text-gold-400"
+                  : "text-[#7b6b8d] hover:text-gold-400"
               }`}
             >
               <item.icon className="w-5 h-5" />

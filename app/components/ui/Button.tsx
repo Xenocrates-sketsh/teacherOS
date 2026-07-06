@@ -29,12 +29,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm",
+        "btn-gold focus:ring-gold-500 shadow-sm",
       secondary:
-        "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500",
+        "bg-surface-card text-[#f8f4ff] hover:bg-gray-200 focus:ring-gray-500",
       outline:
-        "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-primary-500",
-      ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
+        "border border-[rgba(212,175,55,0.15)] bg-surface-card/80 backdrop-blur-xl text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)] focus:ring-gold-500",
+      ghost: "text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.08)] focus:ring-gray-500",
       danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
     };
 

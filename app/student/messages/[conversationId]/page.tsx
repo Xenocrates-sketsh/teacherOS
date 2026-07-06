@@ -28,16 +28,16 @@ export default function StudentConversationPage() {
   if (loading || !userId) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="w-80 border-r border-gray-100 flex flex-col hidden md:flex">
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
+    <div className="flex h-[calc(100vh-4rem)] glass-card overflow-hidden">
+      <div className="w-80 border-r border-[rgba(212,175,55,0.08)] flex flex-col hidden md:flex">
+        <div className="p-4 border-b border-[rgba(212,175,55,0.08)]">
+          <h2 className="text-lg font-semibold text-[#f8f4ff]">Messages</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
           <ConversationList

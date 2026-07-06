@@ -51,7 +51,7 @@ export default function ArchivePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading archive...</div>
+        <div className="text-[#7b6b8d]">Loading archive...</div>
       </div>
     );
   }
@@ -62,33 +62,33 @@ export default function ArchivePage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Archive</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">Archive</h1>
+        <p className="mt-1 text-sm text-[#7b6b8d]">
           Archive classes at the end of a semester or school year. Archived classes are hidden from the main dashboard.
         </p>
       </div>
 
       {activeClasses.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Classes</h2>
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <h2 className="text-lg font-semibold text-[#f8f4ff] mb-4">Active Classes</h2>
+          <div className="bg-surface-card/80 backdrop-blur-xl shadow overflow-hidden sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">Class Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">School</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">Created</th>
                   <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-surface-card/80 backdrop-blur-xl divide-y divide-gray-200">
                 {activeClasses.map((cls) => (
                   <tr key={cls.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{cls.name}</div>
+                      <div className="text-sm font-medium text-[#f8f4ff]">{cls.name}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cls.school_name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#7b6b8d]">{cls.school_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#7b6b8d]">
                       {new Date(cls.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -111,36 +111,36 @@ export default function ArchivePage() {
       )}
 
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-[#f8f4ff] mb-4">
           Archived Classes ({archivedClasses.length})
         </h2>
         {archivedClasses.length === 0 ? (
-          <div className="bg-white shadow rounded-lg p-12 text-center">
+          <div className="bg-surface-card/80 backdrop-blur-xl shadow rounded-lg p-12 text-center">
             <Archive className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nothing archived yet</h3>
-            <p className="text-gray-500">
+            <h3 className="text-lg font-medium text-[#f8f4ff] mb-2">Nothing archived yet</h3>
+            <p className="text-[#7b6b8d]">
               Archive classes from the class settings or here when you're done with them.
             </p>
           </div>
         ) : (
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-surface-card/80 backdrop-blur-xl shadow overflow-hidden sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">Class Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">School</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider">Created</th>
                   <th className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-surface-card/80 backdrop-blur-xl divide-y divide-gray-200">
                 {archivedClasses.map((cls) => (
                   <tr key={cls.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{cls.name}</div>
+                      <div className="text-sm font-medium text-[#f8f4ff]">{cls.name}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cls.school_name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#7b6b8d]">{cls.school_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#7b6b8d]">
                       {new Date(cls.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

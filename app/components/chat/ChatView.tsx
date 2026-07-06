@@ -87,7 +87,7 @@ export default function ChatView({ conversationId, userId }: ChatViewProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-gray-500">Loading messages...</div>
+        <div className="text-[#7b6b8d]">Loading messages...</div>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function ChatView({ conversationId, userId }: ChatViewProps) {
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-[#7b6b8d] py-8">
             No messages yet. Start the conversation!
           </div>
         ) : (
@@ -117,15 +117,15 @@ export default function ChatView({ conversationId, userId }: ChatViewProps) {
                   className={`px-4 py-2 rounded-2xl ${
                     msg.sender_id === userId
                       ? "bg-primary-600 text-white rounded-br-md"
-                      : "bg-gray-100 text-gray-900 rounded-bl-md"
+                      : "bg-surface-card text-[#f8f4ff] rounded-bl-md"
                   }`}
                 >
                   <p className="text-sm">{msg.content}</p>
                   <p
                     className={`text-xs mt-1 ${
                       msg.sender_id === userId
-                        ? "text-primary-200"
-                        : "text-gray-400"
+                        ? "text-[#f8f4ff]/60"
+                        : "text-[#6b5b7d]"
                     }`}
                   >
                     {new Date(msg.created_at).toLocaleTimeString([], {
@@ -141,7 +141,7 @@ export default function ChatView({ conversationId, userId }: ChatViewProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="border-t border-gray-100 p-4">
+      <div className="border-t border-[rgba(212,175,55,0.08)] p-4">
         <MessageInput onSend={handleSend} />
       </div>
     </div>

@@ -2,20 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #0a0015;
+  color: #f8f4ff;
+  min-height: 100vh;
 }
 
 input[type="text"],
@@ -26,14 +24,17 @@ input[type="url"],
 input[type="datetime-local"],
 textarea,
 select {
-  color: #111827 !important;
-  background-color: #ffffff !important;
-  caret-color: #111827 !important;
+  background-color: rgba(26, 10, 46, 0.8) !important;
+  color: #f8f4ff !important;
+  border-color: rgba(212, 175, 55, 0.2) !important;
+  caret-color: #d4af37 !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #9ca3af !important;
+  color: #6b5b7d !important;
   opacity: 1 !important;
 }
 
@@ -41,7 +42,8 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none !important;
-  box-shadow: 0 0 0 2px #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1) !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
 }
 
 input:-webkit-autofill,
@@ -50,91 +52,140 @@ input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus {
-  -webkit-text-fill-color: #111827 !important;
-  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #f8f4ff !important;
+  -webkit-box-shadow: 0 0 0px 1000px #1a0a2e inset !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-@layer base {
-  .dark {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #1e293b;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
-  }
+/* Glass card base */
+.glass {
+  background: rgba(26, 10, 46, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
 }
 
-.dark body {
-  background-color: #0f172a;
-  color: #f1f5f9;
+.glass:hover {
+  border-color: rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.08);
+  transition: all 0.3s ease;
 }
 
-.dark .bg-white {
-  background-color: #1e293b;
+.glass-card {
+  background: rgba(26, 10, 46, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.dark .bg-gray-50 {
-  background-color: #0f172a;
+.glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(212, 175, 55, 0.06);
+  transform: translateY(-2px);
 }
 
-.dark .text-gray-900 {
-  color: #f1f5f9;
+/* Gold button */
+.btn-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f0d060 50%, #d4af37 100%);
+  color: #0a0015;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 15px rgba(212, 175, 55, 0.2);
 }
 
-.dark .text-gray-700 {
-  color: #cbd5e1;
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 25px rgba(212, 175, 55, 0.35);
 }
 
-.dark .text-gray-600 {
-  color: #94a3b8;
+.btn-gold:active {
+  transform: translateY(0);
 }
 
-.dark .text-gray-500 {
-  color: #64748b;
+.btn-gold:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.dark .text-gray-400 {
-  color: #475569;
+/* Gold outline button */
+.btn-gold-outline {
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.dark .border-gray-100,
-.dark .border-gray-200,
-.dark .border-gray-300 {
-  border-color: #334155;
+.btn-gold-outline:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
 }
 
-.dark .bg-gray-100 {
-  background-color: #334155;
+/* Purple button */
+.btn-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 15px rgba(124, 58, 237, 0.3);
 }
 
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
+.btn-purple:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 25px rgba(124, 58, 237, 0.4);
 }
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #64748b !important;
+/* Gold accent link */
+.link-gold {
+  color: #d4af37;
+  transition: all 0.2s ease;
 }
 
-.dark input:-webkit-autofill,
-.dark input:-webkit-autofill:hover,
-.dark input:-webkit-autofill:focus,
-.dark textarea:-webkit-autofill,
-.dark textarea:-webkit-autofill:hover,
-.dark textarea:-webkit-autofill:focus {
-  -webkit-text-fill-color: #f1f5f9 !important;
-  -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+.link-gold:hover {
+  color: #f0d060;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
-.dark .shadow-sm,
-.dark .shadow {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 0, 21, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.4);
+}
+
+/* Selection */
+::selection {
+  background: rgba(212, 175, 55, 0.3);
+  color: #f8f4ff;
+}
+
+/* Focus ring */
+*:focus-visible {
+  outline: 2px solid rgba(212, 175, 55, 0.5);
+  outline-offset: 2px;
 }
 
 @layer utilities {

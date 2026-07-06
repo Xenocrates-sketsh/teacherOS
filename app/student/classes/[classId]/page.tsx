@@ -33,7 +33,7 @@ export default function StudentClassPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading class...</div>
+        <div className="text-[#7b6b8d]">Loading class...</div>
       </div>
     );
   }
@@ -43,27 +43,27 @@ export default function StudentClassPage() {
       <div className="mb-8">
         <Link
           href="/student"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to Dashboard
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mt-2">
           {classData?.name}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-[#7b6b8d]">
           Class
         </p>
       </div>
 
       {/* Workspaces */}
       <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
+        <h2 className="text-lg font-medium text-[#f8f4ff] mb-4">
           Subject Workspaces
         </h2>
         {workspaces.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-12 w-12 text-[#6b5b7d]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -75,10 +75,10 @@ export default function StudentClassPage() {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+            <h3 className="mt-2 text-sm font-medium text-[#f8f4ff]">
               No workspaces yet
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7b6b8d]">
               Your teacher hasn&apos;t created any workspaces yet.
             </p>
           </div>
@@ -88,12 +88,12 @@ export default function StudentClassPage() {
               <Link
                 key={workspace.id}
                 href={`/student/classes/${classId}/workspaces/${workspace.id}`}
-                className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+                className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center mb-3">
-                  <div className="h-10 w-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-lg bg-[rgba(124,58,237,0.1)] flex items-center justify-center">
                     <svg
-                      className="h-6 w-6 text-primary-600"
+                      className="h-6 w-6 text-gold-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -107,10 +107,10 @@ export default function StudentClassPage() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-[#f8f4ff]">
                   {workspace.name}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-[#7b6b8d]">
                   {workspace.subject}
                 </p>
               </Link>

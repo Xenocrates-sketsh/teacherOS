@@ -39,14 +39,14 @@ export default function StudentCalendarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading calendar...</div>
+        <div className="text-[#7b6b8d]">Loading calendar...</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Calendar</h1>
+      <h1 className="text-2xl font-bold text-[#f8f4ff]">Calendar</h1>
 
       <Calendar
         events={events}
@@ -60,21 +60,21 @@ export default function StudentCalendarPage() {
       >
         {selectedEvent && (
           <div className="space-y-3">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#9d8ab5]">
               <strong>Type:</strong> {selectedEvent.event_type}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#9d8ab5]">
               <strong>Start:</strong>{" "}
               {new Date(selectedEvent.start_time).toLocaleString()}
             </p>
             {selectedEvent.end_time && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#9d8ab5]">
                 <strong>End:</strong>{" "}
                 {new Date(selectedEvent.end_time).toLocaleString()}
               </p>
             )}
             {selectedEvent.description && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[#9d8ab5]">
                 <strong>Description:</strong> {selectedEvent.description}
               </p>
             )}

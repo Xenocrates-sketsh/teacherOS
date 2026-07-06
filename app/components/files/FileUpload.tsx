@@ -129,22 +129,22 @@ export default function FileUpload({
   if (selectedFile) {
     const Icon = getFileIcon(selectedFile.type);
     return (
-      <div className="border border-gray-200 rounded-lg p-4">
+      <div className="border border-[rgba(212,175,55,0.1)] rounded-lg p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-            <Icon className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 bg-surface-card rounded-lg flex items-center justify-center">
+            <Icon className="w-5 h-5 text-[#7b6b8d]" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-[#f8f4ff] truncate">
               {selectedFile.name}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[#7b6b8d]">
               {formatFileSize(selectedFile.size)}
             </p>
           </div>
           <button
             onClick={() => setSelectedFile(null)}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-[#6b5b7d] hover:text-[#9d8ab5]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -174,25 +174,25 @@ export default function FileUpload({
     <div
       className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
         isDragging
-          ? "border-primary-400 bg-primary-50"
-          : "border-gray-300 hover:border-gray-400"
+          ? "border-gold-400 bg-[rgba(124,58,237,0.1)]"
+          : "border-[rgba(212,175,55,0.15)] hover:border-gray-400"
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-      <p className="text-sm text-gray-600 mb-1">
+      <Upload className="w-8 h-8 text-[#6b5b7d] mx-auto mb-2" />
+      <p className="text-sm text-[#9d8ab5] mb-1">
         Drag and drop a file here, or{" "}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-primary-600 hover:text-primary-700 font-medium"
+          className="link-gold font-medium"
         >
           browse
         </button>
       </p>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-[#7b6b8d]">
         PDF, DOC, PPT, images up to 10MB
       </p>
       <input

@@ -14,8 +14,8 @@ export default function Badge({
   children,
 }: BadgeProps) {
   const variants = {
-    default: "bg-gray-100 text-gray-700",
-    primary: "bg-primary-100 text-primary-700",
+    default: "bg-surface-card text-[#cbd5e1]",
+    primary: "bg-[rgba(212,175,55,0.15)] text-gold-400",
     success: "bg-green-100 text-green-700",
     warning: "bg-yellow-100 text-yellow-700",
     danger: "bg-red-100 text-red-700",

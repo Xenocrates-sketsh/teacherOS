@@ -45,7 +45,7 @@ export default function StudentCardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading card...</div>
+        <div className="text-[#7b6b8d]">Loading card...</div>
       </div>
     );
   }
@@ -53,10 +53,10 @@ export default function StudentCardPage() {
   if (!studentData) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mb-4">
           No Student Card
         </h1>
-        <p className="text-gray-500">
+        <p className="text-[#7b6b8d]">
           You need to be enrolled in a class to have a student card.
         </p>
       </div>
@@ -66,14 +66,14 @@ export default function StudentCardPage() {
   return (
     <div className="max-w-md mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">My Student Card</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">My Student Card</h1>
+        <p className="mt-1 text-sm text-[#7b6b8d]">
           Your digital student identification.
         </p>
       </div>
 
       {/* Student Card */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl shadow-lg overflow-hidden">
         {/* Card Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
           <h2 className="text-xl font-bold text-white text-center">
@@ -87,7 +87,7 @@ export default function StudentCardPage() {
           <div className="flex justify-center mb-4">
             <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
               <svg
-                className="h-12 w-12 text-gray-400"
+                className="h-12 w-12 text-[#6b5b7d]"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -105,23 +105,23 @@ export default function StudentCardPage() {
           {/* Student Info */}
           <div className="space-y-3">
             <div className="text-center">
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-lg font-semibold text-[#f8f4ff]">
                 {studentData.full_name}
               </p>
-              <p className="text-sm text-gray-500">{studentData.email}</p>
+              <p className="text-sm text-[#7b6b8d]">{studentData.email}</p>
             </div>
 
             <div className="border-t pt-3">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">Student ID</p>
-                  <p className="font-medium text-gray-900 font-mono">
+                  <p className="text-[#7b6b8d]">Student ID</p>
+                  <p className="font-medium text-[#f8f4ff] font-mono">
                     {studentData.student_id}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">School</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-[#7b6b8d]">School</p>
+                  <p className="font-medium text-[#f8f4ff]">
                     {studentData.school_name}
                   </p>
                 </div>
@@ -129,8 +129,8 @@ export default function StudentCardPage() {
             </div>
 
             <div className="border-t pt-3">
-              <p className="text-gray-500 text-sm">Class</p>
-              <p className="font-medium text-gray-900">
+              <p className="text-[#7b6b8d] text-sm">Class</p>
+              <p className="font-medium text-[#f8f4ff]">
                 {studentData.class_name}
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function StudentCardPage() {
 
           {/* QR Code */}
           <div className="mt-6 flex justify-center">
-            <div className="bg-white p-2 border rounded-lg">
+            <div className="bg-surface-card/80 backdrop-blur-xl p-2 border rounded-lg">
               <QRCodeSVG
                 value={studentData.student_id}
                 size={128}
@@ -147,7 +147,7 @@ export default function StudentCardPage() {
             </div>
           </div>
 
-          <p className="text-xs text-gray-400 text-center mt-2">
+          <p className="text-xs text-[#6b5b7d] text-center mt-2">
             Scan for verification
           </p>
         </div>
@@ -157,7 +157,7 @@ export default function StudentCardPage() {
       <div className="mt-6">
         <button
           onClick={() => window.print()}
-          className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="w-full flex justify-center py-2 px-4 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm text-sm font-medium text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
         >
           Print Card
         </button>

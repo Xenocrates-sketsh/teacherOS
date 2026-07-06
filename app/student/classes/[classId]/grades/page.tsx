@@ -78,7 +78,7 @@ export default function StudentGradesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading grades...</div>
+        <div className="text-[#7b6b8d]">Loading grades...</div>
       </div>
     );
   }
@@ -100,37 +100,37 @@ export default function StudentGradesPage() {
       <div>
         <Link
           href={`/student/classes/${classId}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Class
         </Link>
         <div className="flex items-center justify-between mt-2">
-          <h1 className="text-2xl font-bold text-gray-900">My Grades</h1>
+          <h1 className="text-2xl font-bold text-[#f8f4ff]">My Grades</h1>
           {average !== null && (
             <div className="text-right">
-              <p className="text-sm text-gray-500">Overall Average</p>
-              <p className="text-2xl font-bold text-gray-900">{average}%</p>
+              <p className="text-sm text-[#7b6b8d]">Overall Average</p>
+              <p className="text-2xl font-bold text-[#f8f4ff]">{average}%</p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">
+              <tr className="border-b border-[rgba(212,175,55,0.08)]">
+                <th className="text-left px-6 py-4 text-sm font-medium text-[#7b6b8d]">
                   Assignment
                 </th>
-                <th className="text-left px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-left px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Workspace
                 </th>
-                <th className="text-center px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-center px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Status
                 </th>
-                <th className="text-center px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-center px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Grade
                 </th>
               </tr>
@@ -140,18 +140,18 @@ export default function StudentGradesPage() {
                 <tr>
                   <td colSpan={4} className="px-6 py-12 text-center">
                     <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">No homework yet</p>
+                    <p className="text-[#7b6b8d]">No homework yet</p>
                   </td>
                 </tr>
               ) : (
                 grades.map((grade) => (
-                  <tr key={grade.homework_id} className="hover:bg-gray-50">
+                  <tr key={grade.homework_id} className="hover:bg-[rgba(212,175,55,0.05)]">
                     <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-[#f8f4ff]">
                         {grade.homework_title}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500">
+                    <td className="px-4 py-4 text-sm text-[#7b6b8d]">
                       {grade.workspace_name}
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -165,11 +165,11 @@ export default function StudentGradesPage() {
                     </td>
                     <td className="px-4 py-4 text-center">
                       {grade.graded ? (
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="text-sm font-semibold text-[#f8f4ff]">
                           {grade.score} / {grade.max_score}
                         </span>
                       ) : (
-                        <span className="text-gray-400 text-sm">—</span>
+                        <span className="text-[#6b5b7d] text-sm">—</span>
                       )}
                     </td>
                   </tr>

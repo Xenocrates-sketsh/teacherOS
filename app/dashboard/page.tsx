@@ -56,7 +56,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
@@ -92,14 +92,14 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-[#f8f4ff]">
             Welcome back, {user?.full_name?.split(" ")[0]}
           </h1>
-          <p className="text-gray-500 mt-1">Here&apos;s your teaching overview</p>
+          <p className="text-[#7b6b8d] mt-1">Here&apos;s your teaching overview</p>
         </div>
         <Link
           href="/dashboard/schools/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2 btn-gold transition-colors text-sm font-medium"
         >
           <Plus className="w-4 h-4" />
           New School
@@ -107,36 +107,36 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-[rgba(212,175,55,0.08)]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-              <School className="w-6 h-6 text-primary-600" />
+            <div className="w-12 h-12 bg-[rgba(124,58,237,0.1)] rounded-lg flex items-center justify-center">
+              <School className="w-6 h-6 text-gold-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.schools}</p>
-              <p className="text-sm text-gray-500">Schools</p>
+              <p className="text-2xl font-bold text-[#f8f4ff]">{stats.schools}</p>
+              <p className="text-sm text-[#7b6b8d]">Schools</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-[rgba(212,175,55,0.08)]">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <BookOpen className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.classes}</p>
-              <p className="text-sm text-gray-500">Classes</p>
+              <p className="text-2xl font-bold text-[#f8f4ff]">{stats.classes}</p>
+              <p className="text-sm text-[#7b6b8d]">Classes</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl p-6 shadow-sm border border-[rgba(212,175,55,0.08)]">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <Users className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.students}</p>
-              <p className="text-sm text-gray-500">Students</p>
+              <p className="text-2xl font-bold text-[#f8f4ff]">{stats.students}</p>
+              <p className="text-sm text-[#7b6b8d]">Students</p>
             </div>
           </div>
         </div>
@@ -147,32 +147,32 @@ export default function DashboardPage() {
           <Link
             key={action.label}
             href={action.href}
-            className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-200 transition-all group"
+            className="bg-surface-card/80 backdrop-blur-xl rounded-xl p-5 shadow-sm border border-[rgba(212,175,55,0.08)] hover:shadow-md hover:border-gold-400/20 transition-all group"
           >
-            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-100 transition-colors">
-              <action.icon className="w-5 h-5 text-gray-600 group-hover:text-primary-600 transition-colors" />
+            <div className="w-10 h-10 bg-surface-card rounded-lg flex items-center justify-center mb-3 group-hover:bg-[rgba(124,58,237,0.1)] transition-colors">
+              <action.icon className="w-5 h-5 text-[#9d8ab5] group-hover:text-gold-400 transition-colors" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-1">{action.label}</h3>
-            <p className="text-sm text-gray-500">{action.description}</p>
+            <h3 className="font-semibold text-[#f8f4ff] mb-1">{action.label}</h3>
+            <p className="text-sm text-[#7b6b8d]">{action.description}</p>
           </Link>
         ))}
       </div>
 
       {activities.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-gray-400" />
+          <h2 className="text-lg font-semibold text-[#f8f4ff] mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-[#6b5b7d]" />
             Recent Activity
           </h2>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+          <div className="glass-card divide-y divide-gray-100">
             {activities.map((a) => (
               <div key={a.id} className="flex items-start gap-3 px-5 py-4">
-                <div className="w-2 h-2 mt-2 rounded-full bg-primary-400 flex-shrink-0" />
+                <div className="w-2 h-2 mt-2 rounded-full bg-gold-400 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700 capitalize">
+                  <p className="text-sm text-[#cbd5e1] capitalize">
                     {a.action_type.replace(/_/g, " ")}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-[#6b5b7d] mt-0.5">
                     {new Date(a.created_at).toLocaleDateString()} at{" "}
                     {new Date(a.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </p>

@@ -34,9 +34,9 @@ interface CalendarProps {
 const eventTypeColors: Record<string, string> = {
   class: "bg-blue-500",
   homework_due: "bg-orange-500",
-  exam: "bg-red-500",
-  meeting: "bg-green-500",
-  other: "bg-gray-500",
+  exam: "bg-red-500/100/100/100/100/100/100/100",
+  meeting: "bg-green-500/100/100/100/100/100/100/100",
+  other: "bg-[rgba(212,175,55,0.15)]",
 };
 
 const eventTypeLabels: Record<string, string> = {
@@ -59,18 +59,18 @@ export default function Calendar({
     <div className="flex items-center justify-between mb-4">
       <button
         onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2 hover:bg-[rgba(212,175,55,0.08)] rounded-lg transition-colors"
       >
-        <ChevronLeft className="w-5 h-5 text-gray-600" />
+        <ChevronLeft className="w-5 h-5 text-[#9d8ab5]" />
       </button>
-      <h2 className="text-lg font-semibold text-gray-900">
+      <h2 className="text-lg font-semibold text-[#f8f4ff]">
         {format(currentMonth, "MMMM yyyy")}
       </h2>
       <button
         onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2 hover:bg-[rgba(212,175,55,0.08)] rounded-lg transition-colors"
       >
-        <ChevronRight className="w-5 h-5 text-gray-600" />
+        <ChevronRight className="w-5 h-5 text-[#9d8ab5]" />
       </button>
     </div>
   );
@@ -82,7 +82,7 @@ export default function Calendar({
         {days.map((day) => (
           <div
             key={day}
-            className="text-center text-sm font-medium text-gray-500 py-2"
+            className="text-center text-sm font-medium text-[#7b6b8d] py-2"
           >
             {day}
           </div>
@@ -111,10 +111,10 @@ export default function Calendar({
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-[80px] p-2 border border-gray-100 ${
+            className={`min-h-[80px] p-2 border border-[rgba(212,175,55,0.08)] ${
               !isSameMonth(day, monthStart)
-                ? "bg-gray-50 text-gray-400"
-                : "bg-white hover:bg-gray-50"
+                ? "bg-surface text-[#6b5b7d]"
+                : "bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]"
             } ${
               selectedDate && isSameDay(day, selectedDate)
                 ? "ring-2 ring-primary-500"
@@ -129,7 +129,7 @@ export default function Calendar({
               className={`text-sm ${
                 isSameDay(day, new Date())
                   ? "bg-primary-600 text-white w-6 h-6 rounded-full flex items-center justify-center"
-                  : "text-gray-700"
+                  : "text-[#cbd5e1]"
               }`}
             >
               {format(day, "d")}
@@ -139,7 +139,7 @@ export default function Calendar({
                 <div
                   key={event.id}
                   className={`text-xs px-1.5 py-0.5 rounded text-white truncate ${
-                    eventTypeColors[event.event_type] || "bg-gray-500"
+                    eventTypeColors[event.event_type] || "bg-[rgba(212,175,55,0.15)]"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -150,7 +150,7 @@ export default function Calendar({
                 </div>
               ))}
               {dayEvents.length > 2 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-[#7b6b8d]">
                   +{dayEvents.length - 2} more
                 </span>
               )}
@@ -167,11 +167,11 @@ export default function Calendar({
       days = [];
     }
 
-    return <div className="border border-gray-100 rounded-lg overflow-hidden">{rows}</div>;
+    return <div className="border border-[rgba(212,175,55,0.08)] rounded-lg overflow-hidden">{rows}</div>;
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+    <div className="glass-card p-4">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
@@ -184,7 +184,7 @@ export default function Calendar({
                 eventTypeColors[type]
               }`}
             />
-            <span className="text-xs text-gray-500">{label}</span>
+            <span className="text-xs text-[#7b6b8d]">{label}</span>
           </div>
         ))}
       </div>

@@ -89,15 +89,15 @@ export default function NewResourcePage() {
       <div className="mb-8">
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Workspace
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">New Resource</h1>
+        <h1 className="text-2xl font-bold text-[#f8f4ff] mt-2">New Resource</h1>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div className="glass-card">
         <form onSubmit={handleCreate} className="p-6 space-y-6">
           <Input
             label="Title"
@@ -108,7 +108,7 @@ export default function NewResourcePage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
               Resource Type
             </label>
             <div className="flex gap-3">
@@ -117,8 +117,8 @@ export default function NewResourcePage() {
                 onClick={() => setType("link")}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                   type === "link"
-                    ? "border-primary-500 bg-primary-50 text-primary-700"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                    ? "border-gold-500 bg-[rgba(124,58,237,0.1)] text-gold-400"
+                    : "border-[rgba(212,175,55,0.1)] text-[#9d8ab5] hover:border-[rgba(212,175,55,0.15)]"
                 }`}
               >
                 <Link2 className="w-4 h-4" />
@@ -129,8 +129,8 @@ export default function NewResourcePage() {
                 onClick={() => setType("file")}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                   type === "file"
-                    ? "border-primary-500 bg-primary-50 text-primary-700"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                    ? "border-gold-500 bg-[rgba(124,58,237,0.1)] text-gold-400"
+                    : "border-[rgba(212,175,55,0.1)] text-[#9d8ab5] hover:border-[rgba(212,175,55,0.15)]"
                 }`}
               >
                 <Upload className="w-4 h-4" />
@@ -150,7 +150,7 @@ export default function NewResourcePage() {
             />
           ) : (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
                 Upload File
               </label>
               <FileUpload
@@ -162,7 +162,7 @@ export default function NewResourcePage() {
           )}
 
           {error && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+            <div className="text-red-600 text-sm bg-red-500/100/100/100/100/100/100/10 p-3 rounded-lg">
               {error}
             </div>
           )}

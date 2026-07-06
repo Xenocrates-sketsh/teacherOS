@@ -25,10 +25,10 @@ export default function Avatar({ src, alt, name, size = "md" }: AvatarProps) {
 
   const getBackgroundColor = (name: string) => {
     const colors = [
-      "bg-primary-500",
-      "bg-green-500",
+      "bg-gradient-to-br from-gold-500 to-gold-400",
+      "bg-green-500/100/100/100/100/100/100/100",
       "bg-yellow-500",
-      "bg-red-500",
+      "bg-red-500/100/100/100/100/100/100/100",
       "bg-purple-500",
       "bg-pink-500",
       "bg-indigo-500",
@@ -62,7 +62,7 @@ export default function Avatar({ src, alt, name, size = "md" }: AvatarProps) {
 
   return (
     <div
-      className={`${sizes[size]} bg-gray-300 rounded-full flex items-center justify-center text-gray-600`}
+      className={`${sizes[size]} bg-gray-300 rounded-full flex items-center justify-center text-[#9d8ab5]`}
     >
       <svg
         className="w-1/2 h-1/2"

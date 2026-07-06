@@ -121,7 +121,7 @@ export default function SubmissionsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading submissions...</div>
+        <div className="text-[#7b6b8d]">Loading submissions...</div>
       </div>
     );
   }
@@ -131,20 +131,20 @@ export default function SubmissionsPage() {
       <div>
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Workspace
         </Link>
         <div className="flex items-center justify-between mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-2xl font-bold text-[#f8f4ff]">Submissions</h1>
+            <p className="text-[#7b6b8d] mt-1">
               {submissions.length} submission{submissions.length !== 1 ? "s" : ""}
             </p>
           </div>
           {successMsg && (
-            <div className="flex items-center gap-1 text-sm text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1 text-sm text-green-600 bg-green-500/100/100/100/100/100/100/10 px-3 py-1.5 rounded-full">
               <CheckCircle className="w-4 h-4" />
               {successMsg}
             </div>
@@ -153,12 +153,12 @@ export default function SubmissionsPage() {
       </div>
 
       {submissions.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+        <div className="glass-card p-12 text-center">
           <Clock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-2">
             No submissions yet
           </h3>
-          <p className="text-gray-500">
+          <p className="text-[#7b6b8d]">
             Students haven&apos;t submitted their work yet.
           </p>
         </div>
@@ -167,18 +167,18 @@ export default function SubmissionsPage() {
           {submissions.map((sub) => (
             <div
               key={sub.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+              className="glass-card p-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-medium">
+                  <div className="w-10 h-10 bg-[rgba(124,58,237,0.1)] rounded-full flex items-center justify-center text-gold-400 font-medium">
                     {sub.student_name?.charAt(0) || "S"}
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">
+                    <h3 className="font-medium text-[#f8f4ff]">
                       {sub.student_name}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[#7b6b8d]">
                       Submitted{" "}
                       {new Date(sub.submitted_at).toLocaleDateString()}
                     </p>
@@ -194,7 +194,7 @@ export default function SubmissionsPage() {
               </div>
 
               {sub.content && (
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+                <div className="mt-4 p-3 bg-surface rounded-lg text-sm text-[#cbd5e1]">
                   {sub.content}
                 </div>
               )}
@@ -205,7 +205,7 @@ export default function SubmissionsPage() {
                     href={sub.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700"
+                    className="inline-flex items-center gap-2 text-sm link-gold"
                   >
                     <FileText className="w-4 h-4" />
                     View attached file

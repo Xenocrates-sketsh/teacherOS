@@ -99,23 +99,23 @@ export default function MessagesPage() {
   if (loading || !userId) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-[#7b6b8d]">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] glass-card overflow-hidden">
       <div
-        className={`w-80 border-r border-gray-100 flex flex-col ${
+        className={`w-80 border-r border-[rgba(212,175,55,0.08)] flex flex-col ${
           conversationId ? "hidden md:flex" : "flex"
         }`}
       >
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
+        <div className="p-4 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-[#f8f4ff]">Messages</h2>
           <button
             onClick={() => setShowNewModal(true)}
-            className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+            className="p-1.5 text-[#6b5b7d] hover:text-gold-400 hover:bg-[rgba(124,58,237,0.1)] rounded-lg transition-colors"
             title="New message"
           >
             <Plus className="w-5 h-5" />
@@ -138,7 +138,7 @@ export default function MessagesPage() {
         {conversationId ? (
           <ChatView conversationId={conversationId} userId={userId} />
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500 flex-col gap-3">
+          <div className="flex-1 flex items-center justify-center text-[#7b6b8d] flex-col gap-3">
             <MessageSquare className="w-12 h-12 text-gray-300" />
             <p>Select a conversation to start chatting</p>
             <Button variant="primary" onClick={() => setShowNewModal(true)}>
@@ -160,7 +160,7 @@ export default function MessagesPage() {
       >
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d]" />
             <input
               type="text"
               value={userSearch}
@@ -169,17 +169,17 @@ export default function MessagesPage() {
                 searchUsers(e.target.value);
               }}
               placeholder="Search by name or email..."
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-9 pr-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-lg text-sm focus:ring-2 focus:ring-gold-500 focus:border-gold-500"
               autoFocus
             />
           </div>
 
           {searching && (
-            <p className="text-sm text-gray-500 text-center py-4">Searching...</p>
+            <p className="text-sm text-[#7b6b8d] text-center py-4">Searching...</p>
           )}
 
           {!searching && searchResults.length === 0 && userSearch.length >= 2 && (
-            <p className="text-sm text-gray-500 text-center py-4">No users found</p>
+            <p className="text-sm text-[#7b6b8d] text-center py-4">No users found</p>
           )}
 
           {searchResults.length > 0 && (
@@ -191,14 +191,14 @@ export default function MessagesPage() {
                     key={u.id}
                     onClick={() => startConversation(u.id)}
                     disabled={creating}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full flex items-center gap-3 p-3 hover:bg-[rgba(212,175,55,0.05)] rounded-lg transition-colors disabled:opacity-50"
                   >
                     <Avatar name={u.full_name} size="md" />
                     <div className="text-left">
-                      <p className="text-sm font-medium text-gray-900">{u.full_name}</p>
-                      <p className="text-xs text-gray-500">{u.email}</p>
+                      <p className="text-sm font-medium text-[#f8f4ff]">{u.full_name}</p>
+                      <p className="text-xs text-[#7b6b8d]">{u.email}</p>
                     </div>
-                    <span className="ml-auto text-xs text-gray-400 capitalize bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span className="ml-auto text-xs text-[#6b5b7d] capitalize bg-surface-card px-2 py-0.5 rounded-full">
                       {u.role}
                     </span>
                   </button>
@@ -207,7 +207,7 @@ export default function MessagesPage() {
           )}
 
           {userSearch.length < 2 && (
-            <p className="text-xs text-gray-400 text-center py-4">Type at least 2 characters to search</p>
+            <p className="text-xs text-[#6b5b7d] text-center py-4">Type at least 2 characters to search</p>
           )}
         </div>
       </Modal>

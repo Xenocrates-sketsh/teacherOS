@@ -117,7 +117,7 @@ export default function ClassDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading class...</div>
+        <div className="text-[#7b6b8d]">Loading class...</div>
       </div>
     );
   }
@@ -127,23 +127,23 @@ export default function ClassDetailPage() {
       <div className="mb-8">
         <Link
           href={`/dashboard/schools/${schoolId}`}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to School
         </Link>
         <div className="flex items-center justify-between mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[#f8f4ff]">
               {classData?.name}
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7b6b8d]">
               {studentCount} student{studentCount !== 1 ? "s" : ""} enrolled
             </p>
           </div>
           <div className="flex gap-2 sm:gap-3">
             <button
               onClick={() => setShowInvite(!showInvite)}
-              className="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 shadow-sm text-xs sm:text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="inline-flex items-center px-3 sm:px-4 py-2 border border-[rgba(212,175,55,0.15)] shadow-sm text-xs sm:text-sm font-medium rounded-md text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
             >
               <svg
                 className="-ml-1 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5"
@@ -163,7 +163,7 @@ export default function ClassDetailPage() {
             </button>
             <Link
               href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/new`}
-              className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent shadow-sm text-xs sm:text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent shadow-sm text-xs sm:text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
             >
               <svg
                 className="-ml-1 mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5"
@@ -189,16 +189,16 @@ export default function ClassDetailPage() {
       {showInvite && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div
-            className="fixed inset-0 bg-gray-500 bg-opacity-75"
+            className="fixed inset-0 bg-[#0a0015]/75"
             onClick={() => setShowInvite(false)}
           />
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+            <div className="relative transform overflow-hidden rounded-lg bg-surface-card/80 backdrop-blur-xl px-4 pb-4 pt-5 text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
               <div className="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                 <button
                   type="button"
                   onClick={() => setShowInvite(false)}
-                  className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none"
+                  className="rounded-md bg-surface-card/80 backdrop-blur-xl text-[#6b5b7d] hover:text-[#7b6b8d] focus:outline-none"
                 >
                   <span className="sr-only">Close</span>
                   <svg
@@ -218,10 +218,10 @@ export default function ClassDetailPage() {
               </div>
               <div>
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-[#f8f4ff]">
                     Invite Students
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-[#7b6b8d]">
                     Share this code or QR code with your students.
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export default function ClassDetailPage() {
                           </div>
                           <button
                             onClick={() => copyCode(classCode.code)}
-                            className="text-sm text-primary-600 hover:text-primary-700"
+                            className="text-sm link-gold"
                           >
                             {copied === classCode.code ? "Copied!" : "Copy"}
                           </button>
@@ -269,13 +269,13 @@ export default function ClassDetailPage() {
                   {/* Generate new code */}
                   <button
                     onClick={generateCode}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg p-4 text-sm text-gray-600 hover:border-primary-400 hover:text-primary-600"
+                    className="w-full border-2 border-dashed border-[rgba(212,175,55,0.15)] rounded-lg p-4 text-sm text-[#9d8ab5] hover:border-gold-400 hover:text-gold-400"
                   >
                     + Generate New Code
                   </button>
                   <button
                     onClick={() => generateBulkCodes(5)}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg p-3 text-xs text-gray-500 hover:border-primary-400 hover:text-primary-600"
+                    className="w-full border-2 border-dashed border-[rgba(212,175,55,0.15)] rounded-lg p-3 text-xs text-[#7b6b8d] hover:border-gold-400 hover:text-gold-400"
                   >
                     + Generate 5 Codes (Bulk)
                   </button>
@@ -288,13 +288,13 @@ export default function ClassDetailPage() {
 
       {/* Workspaces */}
       <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
+        <h2 className="text-lg font-medium text-[#f8f4ff] mb-4">
           Subject Workspaces
         </h2>
         {workspaces.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-12 w-12 text-[#6b5b7d]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -306,16 +306,16 @@ export default function ClassDetailPage() {
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+            <h3 className="mt-2 text-sm font-medium text-[#f8f4ff]">
               No workspaces yet
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7b6b8d]">
               Create a workspace for a subject to get started.
             </p>
             <div className="mt-6">
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -340,7 +340,7 @@ export default function ClassDetailPage() {
               <Link
                 key={workspace.id}
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspace.id}`}
-                className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+                className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center mb-3">
                   <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
@@ -359,10 +359,10 @@ export default function ClassDetailPage() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-[#f8f4ff]">
                   {workspace.name}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-[#7b6b8d]">
                   {workspace.subject}
                 </p>
               </Link>
@@ -374,26 +374,26 @@ export default function ClassDetailPage() {
       {/* Class Codes Management */}
       {classCodes.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Class Codes</h2>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <h2 className="text-lg font-medium text-[#f8f4ff] mb-4">Class Codes</h2>
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface">
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider"
                   >
                     Code
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider"
                   >
                     Status
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-[#7b6b8d] uppercase tracking-wider"
                   >
                     Created
                   </th>
@@ -402,11 +402,11 @@ export default function ClassDetailPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-surface-card/80 backdrop-blur-xl divide-y divide-gray-200">
                 {classCodes.map((classCode) => (
                   <tr key={classCode.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-mono text-sm font-medium text-gray-900">
+                      <span className="font-mono text-sm font-medium text-[#f8f4ff]">
                         {classCode.code}
                       </span>
                     </td>
@@ -415,19 +415,19 @@ export default function ClassDetailPage() {
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           classCode.is_active
                             ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                            : "bg-surface-card text-gray-800"
                         }`}
                       >
                         {classCode.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#7b6b8d]">
                       {new Date(classCode.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => copyCode(classCode.code)}
-                        className="text-primary-600 hover:text-primary-900 mr-4"
+                        className="link-gold mr-4"
                       >
                         Copy
                       </button>

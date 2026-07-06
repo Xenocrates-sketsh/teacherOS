@@ -55,21 +55,21 @@ export default function StudentAttendancePage() {
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading attendance...</div></div>;
+    return <div className="flex items-center justify-center h-64"><div className="text-[#7b6b8d]">Loading attendance...</div></div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Attendance</h1>
-        <p className="mt-1 text-sm text-gray-500">Your attendance record across all classes.</p>
+        <h1 className="text-2xl font-bold text-[#f8f4ff]">My Attendance</h1>
+        <p className="mt-1 text-sm text-[#7b6b8d]">Your attendance record across all classes.</p>
       </div>
 
       {stats.total > 0 && (
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Present", count: stats.present, color: "text-green-600", bg: "bg-green-50", icon: CheckCircle },
-            { label: "Absent", count: stats.absent, color: "text-red-600", bg: "bg-red-50", icon: XCircle },
+            { label: "Present", count: stats.present, color: "text-green-600", bg: "bg-green-500/100/100/100/100/100/100/10", icon: CheckCircle },
+            { label: "Absent", count: stats.absent, color: "text-red-600", bg: "bg-red-500/100/100/100/100/100/100/10", icon: XCircle },
             { label: "Late", count: stats.late, color: "text-yellow-600", bg: "bg-yellow-50", icon: Clock },
             { label: "Excused", count: stats.excused, color: "text-blue-600", bg: "bg-blue-50", icon: AlertTriangle },
           ].map((item) => {
@@ -79,7 +79,7 @@ export default function StudentAttendancePage() {
               <div key={item.label} className={`${item.bg} rounded-xl p-4 text-center`}>
                 <Icon className={`w-6 h-6 ${item.color} mx-auto mb-1`} />
                 <p className={`text-lg font-bold ${item.color}`}>{percentage}%</p>
-                <p className="text-xs text-gray-600">{item.label}</p>
+                <p className="text-xs text-[#9d8ab5]">{item.label}</p>
               </div>
             );
           })}
@@ -87,28 +87,28 @@ export default function StudentAttendancePage() {
       )}
 
       {records.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+        <div className="glass-card p-12 text-center">
           <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No attendance records yet</h3>
-          <p className="text-gray-500">Your teacher hasn't marked any attendance sessions yet.</p>
+          <h3 className="text-lg font-medium text-[#f8f4ff] mb-2">No attendance records yet</h3>
+          <p className="text-[#7b6b8d]">Your teacher hasn't marked any attendance sessions yet.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Date</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Class</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Status</th>
+              <tr className="border-b border-[rgba(212,175,55,0.08)]">
+                <th className="text-left px-6 py-4 text-sm font-medium text-[#7b6b8d]">Date</th>
+                <th className="text-left px-6 py-4 text-sm font-medium text-[#7b6b8d]">Class</th>
+                <th className="text-left px-6 py-4 text-sm font-medium text-[#7b6b8d]">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {records.map((r, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                <tr key={i} className="hover:bg-[rgba(212,175,55,0.05)]">
+                  <td className="px-6 py-4 text-sm text-[#f8f4ff]">
                     {new Date(r.date).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{r.class_name}</td>
+                  <td className="px-6 py-4 text-sm text-[#9d8ab5]">{r.class_name}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       r.status === "present" ? "bg-green-100 text-green-700" :

@@ -98,7 +98,7 @@ export default function WorkspaceDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading workspace...</div>
+        <div className="text-[#7b6b8d]">Loading workspace...</div>
       </div>
     );
   }
@@ -115,16 +115,16 @@ export default function WorkspaceDetailPage() {
       <div className="mb-8">
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}`}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to Class
         </Link>
         <div className="flex items-center justify-between mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[#f8f4ff]">
               {workspace?.name}
             </h1>
-            <p className="mt-1 text-sm text-gray-500">{workspace?.subject}</p>
+            <p className="mt-1 text-sm text-[#7b6b8d]">{workspace?.subject}</p>
           </div>
         </div>
       </div>
@@ -132,33 +132,33 @@ export default function WorkspaceDetailPage() {
       {/* Stats */}
       {stats.totalHomework > 0 && (
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">{stats.submissionRate}%</p>
-            <p className="text-xs text-gray-500 mt-1">Submission Rate</p>
-            <div className="mt-2 w-full bg-gray-100 rounded-full h-1.5">
-              <div className="bg-primary-500 h-1.5 rounded-full" style={{ width: `${stats.submissionRate}%` }} />
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl border border-[rgba(212,175,55,0.08)] p-4 text-center">
+            <p className="text-2xl font-bold text-[#f8f4ff]">{stats.submissionRate}%</p>
+            <p className="text-xs text-[#7b6b8d] mt-1">Submission Rate</p>
+            <div className="mt-2 w-full bg-surface-card rounded-full h-1.5">
+              <div className="bg-gradient-to-br from-gold-500 to-gold-400 h-1.5 rounded-full" style={{ width: `${stats.submissionRate}%` }} />
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">{stats.avgScore !== null ? `${stats.avgScore}%` : "—"}</p>
-            <p className="text-xs text-gray-500 mt-1">Average Score</p>
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl border border-[rgba(212,175,55,0.08)] p-4 text-center">
+            <p className="text-2xl font-bold text-[#f8f4ff]">{stats.avgScore !== null ? `${stats.avgScore}%` : "—"}</p>
+            <p className="text-xs text-[#7b6b8d] mt-1">Average Score</p>
             {stats.avgScore !== null && (
-              <div className="mt-2 w-full bg-gray-100 rounded-full h-1.5">
+              <div className="mt-2 w-full bg-surface-card rounded-full h-1.5">
                 <div className={`h-1.5 rounded-full ${
-                  stats.avgScore >= 70 ? "bg-green-500" : stats.avgScore >= 50 ? "bg-yellow-500" : "bg-red-500"
+                  stats.avgScore >= 70 ? "bg-green-500/100/100/100/100/100/100/100" : stats.avgScore >= 50 ? "bg-yellow-500" : "bg-red-500/100/100/100/100/100/100/100"
                 }`} style={{ width: `${stats.avgScore}%` }} />
               </div>
             )}
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">{stats.totalHomework}</p>
-            <p className="text-xs text-gray-500 mt-1">Total Homework</p>
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-xl border border-[rgba(212,175,55,0.08)] p-4 text-center">
+            <p className="text-2xl font-bold text-[#f8f4ff]">{stats.totalHomework}</p>
+            <p className="text-xs text-[#7b6b8d] mt-1">Total Homework</p>
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-[rgba(212,175,55,0.1)] mb-6">
         <nav className="-mb-px flex space-x-8 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
@@ -166,8 +166,8 @@ export default function WorkspaceDetailPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.id
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-gold-500 text-gold-400"
+                  : "border-transparent text-[#7b6b8d] hover:text-[#cbd5e1] hover:border-[rgba(212,175,55,0.15)]"
               }`}
             >
               {tab.label}
@@ -175,8 +175,8 @@ export default function WorkspaceDetailPage() {
                 <span
                   className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
                     activeTab === tab.id
-                      ? "bg-primary-100 text-primary-600"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-[rgba(212,175,55,0.15)] text-gold-400"
+                      : "bg-surface-card text-[#9d8ab5]"
                   }`}
                 >
                   {tab.count}
@@ -193,10 +193,10 @@ export default function WorkspaceDetailPage() {
         {activeTab === "lessons" && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Lessons</h3>
+              <h3 className="text-lg font-medium text-[#f8f4ff]">Lessons</h3>
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}/lessons/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -215,23 +215,23 @@ export default function WorkspaceDetailPage() {
               </Link>
             </div>
             {lessons.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No lessons yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No lessons yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {lessons.map((lesson) => (
                   <div
                     key={lesson.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
-                    <h4 className="text-lg font-medium text-gray-900">
+                    <h4 className="text-lg font-medium text-[#f8f4ff]">
                       {lesson.title}
                     </h4>
-                    <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap line-clamp-3">
+                    <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap line-clamp-3">
                       {lesson.content}
                     </p>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       {new Date(lesson.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -245,10 +245,10 @@ export default function WorkspaceDetailPage() {
         {activeTab === "homework" && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Homework</h3>
+              <h3 className="text-lg font-medium text-[#f8f4ff]">Homework</h3>
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}/homework/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -267,13 +267,13 @@ export default function WorkspaceDetailPage() {
               </Link>
             </div>
             {homework.length > 0 && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+              <div className="glass-card p-5 mb-6">
                 <GradeDistribution
                   ranges={[
-                    { label: "90-100%", count: 0, color: "bg-green-500" },
+                    { label: "90-100%", count: 0, color: "bg-green-500/100/100/100/100/100/100/100" },
                     { label: "70-89%", count: 0, color: "bg-blue-500" },
                     { label: "50-69%", count: 0, color: "bg-yellow-500" },
-                    { label: "0-49%", count: 0, color: "bg-red-500" },
+                    { label: "0-49%", count: 0, color: "bg-red-500/100/100/100/100/100/100/100" },
                   ]}
                   total={0}
                 />
@@ -281,22 +281,22 @@ export default function WorkspaceDetailPage() {
             )}
 
             {homework.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No homework yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No homework yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {homework.map((hw) => (
                   <div
                     key={hw.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="text-lg font-medium text-gray-900">
+                        <h4 className="text-lg font-medium text-[#f8f4ff]">
                           {hw.title}
                         </h4>
-                        <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+                        <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap">
                           {hw.description}
                         </p>
                       </div>
@@ -312,7 +312,7 @@ export default function WorkspaceDetailPage() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       Posted {new Date(hw.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -326,10 +326,10 @@ export default function WorkspaceDetailPage() {
         {activeTab === "announcements" && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Announcements</h3>
+              <h3 className="text-lg font-medium text-[#f8f4ff]">Announcements</h3>
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}/announcements/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -348,23 +348,23 @@ export default function WorkspaceDetailPage() {
               </Link>
             </div>
             {announcements.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No announcements yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No announcements yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {announcements.map((announcement) => (
                   <div
                     key={announcement.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
-                    <h4 className="text-lg font-medium text-gray-900">
+                    <h4 className="text-lg font-medium text-[#f8f4ff]">
                       {announcement.title}
                     </h4>
-                    <p className="mt-2 text-sm text-gray-600 whitespace-pre-wrap">
+                    <p className="mt-2 text-sm text-[#9d8ab5] whitespace-pre-wrap">
                       {announcement.content}
                     </p>
-                    <p className="mt-4 text-xs text-gray-400">
+                    <p className="mt-4 text-xs text-[#6b5b7d]">
                       {new Date(announcement.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -378,10 +378,10 @@ export default function WorkspaceDetailPage() {
         {activeTab === "resources" && (
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Resources</h3>
+              <h3 className="text-lg font-medium text-[#f8f4ff]">Resources</h3>
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/${classId}/workspaces/${workspaceId}/resources/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -400,21 +400,21 @@ export default function WorkspaceDetailPage() {
               </Link>
             </div>
             {resources.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
-                <p className="text-sm text-gray-500">No resources yet.</p>
+              <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
+                <p className="text-sm text-[#7b6b8d]">No resources yet.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {resources.map((resource) => (
                   <div
                     key={resource.id}
-                    className="bg-white rounded-lg shadow p-6"
+                    className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6"
                   >
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         {resource.type === "file" ? (
                           <svg
-                            className="h-8 w-8 text-gray-400"
+                            className="h-8 w-8 text-[#6b5b7d]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -428,7 +428,7 @@ export default function WorkspaceDetailPage() {
                           </svg>
                         ) : (
                           <svg
-                            className="h-8 w-8 text-gray-400"
+                            className="h-8 w-8 text-[#6b5b7d]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -443,10 +443,10 @@ export default function WorkspaceDetailPage() {
                         )}
                       </div>
                       <div className="ml-4 flex-1">
-                        <h4 className="text-lg font-medium text-gray-900">
+                        <h4 className="text-lg font-medium text-[#f8f4ff]">
                           {resource.title}
                         </h4>
-                        <p className="text-sm text-gray-500 capitalize">
+                        <p className="text-sm text-[#7b6b8d] capitalize">
                           {resource.type === "file" ? "File" : "Link"}
                         </p>
                       </div>
@@ -456,7 +456,7 @@ export default function WorkspaceDetailPage() {
                             href={resource.file_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-4 py-2 border border-[rgba(212,175,55,0.15)] shadow-sm text-sm font-medium rounded-md text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]"
                           >
                             Download
                           </a>
@@ -465,7 +465,7 @@ export default function WorkspaceDetailPage() {
                             href={resource.link_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-4 py-2 border border-[rgba(212,175,55,0.15)] shadow-sm text-sm font-medium rounded-md text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]"
                           >
                             Open Link
                           </a>

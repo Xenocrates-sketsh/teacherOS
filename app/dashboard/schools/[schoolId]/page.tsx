@@ -34,7 +34,7 @@ export default function SchoolDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading school...</div>
+        <div className="text-[#7b6b8d]">Loading school...</div>
       </div>
     );
   }
@@ -44,20 +44,20 @@ export default function SchoolDetailPage() {
       <div className="mb-8">
         <Link
           href="/dashboard/schools"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-[#7b6b8d] hover:text-[#cbd5e1]"
         >
           ← Back to Schools
         </Link>
         <div className="flex items-center justify-between mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{school?.name}</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <h1 className="text-2xl font-bold text-[#f8f4ff]">{school?.name}</h1>
+            <p className="mt-1 text-sm text-[#7b6b8d]">
               Created {new Date(school?.created_at).toLocaleDateString()}
             </p>
           </div>
           <Link
             href={`/dashboard/schools/${schoolId}/classes/new`}
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
           >
             <svg
               className="-ml-1 mr-2 h-5 w-5"
@@ -79,11 +79,11 @@ export default function SchoolDetailPage() {
 
       {/* Classes */}
       <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Classes</h2>
+        <h2 className="text-lg font-medium text-[#f8f4ff] mb-4">Classes</h2>
         {classes.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-8 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-12 w-12 text-[#6b5b7d]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -95,16 +95,16 @@ export default function SchoolDetailPage() {
                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+            <h3 className="mt-2 text-sm font-medium text-[#f8f4ff]">
               No classes yet
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[#7b6b8d]">
               Create your first class to get started.
             </p>
             <div className="mt-6">
               <Link
                 href={`/dashboard/schools/${schoolId}/classes/new`}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
               >
                 <svg
                   className="-ml-1 mr-2 h-5 w-5"
@@ -129,7 +129,7 @@ export default function SchoolDetailPage() {
               <Link
                 key={cls.id}
                 href={`/dashboard/schools/${schoolId}/classes/${cls.id}`}
-                className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+                className="bg-surface-card/80 backdrop-blur-xl rounded-lg shadow p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center mb-3">
                   <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
@@ -148,8 +148,8 @@ export default function SchoolDetailPage() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">{cls.name}</h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <h3 className="text-lg font-medium text-[#f8f4ff]">{cls.name}</h3>
+                <p className="mt-1 text-sm text-[#7b6b8d]">
                   Created {new Date(cls.created_at).toLocaleDateString()}
                 </p>
               </Link>

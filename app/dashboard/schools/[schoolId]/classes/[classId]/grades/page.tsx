@@ -103,7 +103,7 @@ export default function GradesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading grades...</div>
+        <div className="text-[#7b6b8d]">Loading grades...</div>
       </div>
     );
   }
@@ -125,13 +125,13 @@ export default function GradesPage() {
       <div>
         <Link
           href={`/dashboard/schools/${schoolId}/classes/${classId}`}
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-[#7b6b8d] hover:text-[#cbd5e1] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Class
         </Link>
         <div className="flex items-center justify-between mt-2">
-          <h1 className="text-2xl font-bold text-gray-900">Gradebook</h1>
+          <h1 className="text-2xl font-bold text-[#f8f4ff]">Gradebook</h1>
           <Button variant="secondary" size="sm" onClick={exportCSV}>
             <Download className="w-4 h-4 mr-1" />
             Export CSV
@@ -139,21 +139,21 @@ export default function GradesPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">
+              <tr className="border-b border-[rgba(212,175,55,0.08)]">
+                <th className="text-left px-6 py-4 text-sm font-medium text-[#7b6b8d]">
                   Student
                 </th>
-                <th className="text-center px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-center px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Average
                 </th>
-                <th className="text-center px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-center px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Submissions
                 </th>
-                <th className="text-center px-4 py-4 text-sm font-medium text-gray-500">
+                <th className="text-center px-4 py-4 text-sm font-medium text-[#7b6b8d]">
                   Graded
                 </th>
               </tr>
@@ -170,13 +170,13 @@ export default function GradesPage() {
                 const average = getStudentAverage(student.id);
 
                 return (
-                  <tr key={student.id} className="hover:bg-gray-50">
+                  <tr key={student.id} className="hover:bg-[rgba(212,175,55,0.05)]">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 text-sm font-medium">
+                        <div className="w-8 h-8 bg-[rgba(124,58,237,0.1)] rounded-full flex items-center justify-center text-gold-400 text-sm font-medium">
                           {student.full_name?.charAt(0) || "S"}
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-[#f8f4ff]">
                           {student.full_name}
                         </span>
                       </div>
@@ -195,13 +195,13 @@ export default function GradesPage() {
                           {average}%
                         </Badge>
                       ) : (
-                        <span className="text-gray-400 text-sm">—</span>
+                        <span className="text-[#6b5b7d] text-sm">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-center text-sm text-gray-600">
+                    <td className="px-4 py-4 text-center text-sm text-[#9d8ab5]">
                       {submitted} / {studentGrades.length}
                     </td>
-                    <td className="px-4 py-4 text-center text-sm text-gray-600">
+                    <td className="px-4 py-4 text-center text-sm text-[#9d8ab5]">
                       {graded} / {studentGrades.length}
                     </td>
                   </tr>
