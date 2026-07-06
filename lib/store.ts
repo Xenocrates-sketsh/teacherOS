@@ -384,9 +384,11 @@ export function saveActivity(a: Omit<Activity, "id" | "created_at">): Activity {
 export interface Conversation {
   id: string;
   name: string | null;
-  type: "direct" | "class" | "workspace";
+  type: "direct" | "group" | "class" | "workspace";
   class_id: string | null;
   workspace_id: string | null;
+  member_ids: string[];
+  created_by: string;
   created_at: string;
 }
 
@@ -396,7 +398,13 @@ export function getConversations(): Conversation[] {
 
 export function saveConversation(c: Omit<Conversation, "id" | "created_at">): Conversation {
   const list = getConversations();
-  const conv: Conversation = { ...c, id: generateId(), created_at: new Date().toISOString() };
+  const conv: Conversation = {
+    ...c,
+    member_ids: c.member_ids || [],
+    created_by: c.created_by || "system",
+    id: generateId(),
+    created_at: new Date().toISOString(),
+  };
   list.push(conv);
   setItem("conversations", list);
   return conv;
@@ -414,6 +422,11 @@ export interface Message {
 export function getMessages(conversationId?: string): Message[] {
   const all = getItem<Message[]>("messages", []);
   return conversationId ? all.filter((m) => m.conversation_id === conversationId) : all;
+}
+
+export function getConversationMembers(conversationId: string): string[] {
+  const conv = getConversations().find((c) => c.id === conversationId);
+  return conv?.member_ids || [];
 }
 
 export function saveMessage(m: Omit<Message, "id" | "created_at">): Message {

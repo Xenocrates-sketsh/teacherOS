@@ -26,13 +26,13 @@ export default function Avatar({ src, alt, name, size = "md" }: AvatarProps) {
   const getBackgroundColor = (name: string) => {
     const colors = [
       "bg-gradient-to-br from-gold-500 to-gold-400",
-      "bg-green-500/100/100/100/100/100/100/100",
-      "bg-yellow-500",
-      "bg-red-500/100/100/100/100/100/100/100",
-      "bg-purple-500",
-      "bg-pink-500",
-      "bg-indigo-500",
-      "bg-teal-500",
+      "bg-gradient-to-br from-green-500 to-emerald-400",
+      "bg-gradient-to-br from-yellow-500 to-amber-400",
+      "bg-gradient-to-br from-red-500 to-rose-400",
+      "bg-gradient-to-br from-purple-500 to-violet-400",
+      "bg-gradient-to-br from-pink-500 to-fuchsia-400",
+      "bg-gradient-to-br from-indigo-500 to-blue-400",
+      "bg-gradient-to-br from-teal-500 to-cyan-400",
     ];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
