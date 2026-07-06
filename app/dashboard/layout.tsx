@@ -14,13 +14,13 @@ import {
   Calendar,
   Settings,
   LogOut,
-  Menu,
   X,
   GraduationCap,
   Bell,
   ChevronLeft,
 } from "lucide-react";
 import NotificationBell from "@/app/components/notifications/NotificationBell";
+import SettingsButton from "@/app/components/ui/SettingsButton";
 
 export default function DashboardLayout({
   children,
@@ -191,12 +191,12 @@ export default function DashboardLayout({
         <header className="sticky top-0 z-10 bg-surface-card/80 backdrop-blur-xl border-b border-[rgba(212,175,55,0.08)]">
           <div className="flex items-center justify-between h-14 px-4 lg:px-8">
             <div className="flex items-center gap-3">
-              <button
-                className="lg:hidden text-[#7b6b8d] hover:text-[#cbd5e1] transition-colors"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu className="w-5 h-5" />
-              </button>
+              <div className="lg:hidden">
+                <SettingsButton
+                  onClick={() => setSidebarOpen(true)}
+                  open={sidebarOpen}
+                />
+              </div>
               <div className="hidden lg:flex items-center gap-2 text-[#6b5b7d] text-sm">
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span>Overview</span>
