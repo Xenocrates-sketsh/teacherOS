@@ -4,7 +4,6 @@ module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/shared/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -22,16 +21,16 @@ module.exports = {
           900: "#581c87",
         },
         gold: {
-          50: "#fefce8",
-          100: "#fef9c3",
-          200: "#fef08a",
-          300: "#fde047",
-          400: "#facc15",
-          500: "#d4af37",
-          600: "#b8962e",
-          700: "#9a7d25",
-          800: "#7c641c",
-          900: "#5e4b14",
+          50: "#fdf8e8",
+          100: "#f9eeb8",
+          200: "#f4df88",
+          300: "#eac758",
+          400: "#d4af37",
+          500: "#b8962e",
+          600: "#9a7d25",
+          700: "#7c641c",
+          800: "#5e4b14",
+          900: "#3d300b",
         },
         surface: {
           DEFAULT: "#0a0015",
@@ -56,6 +55,7 @@ module.exports = {
         "pulse-glow": "pulseGlow 2s ease-in-out infinite",
         twinkle: "twinkle 3s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
+        gradient: "gradient 3s ease infinite",
       },
       keyframes: {
         fadeIn: {
@@ -81,6 +81,10 @@ module.exports = {
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
+        },
+        gradient: {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
         },
       },
       backdropBlur: {

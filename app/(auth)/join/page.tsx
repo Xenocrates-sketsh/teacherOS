@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { registerUser, initDefaultUsers, getSession } from "@/lib/auth";
 import { getClassCodes, getClasses, enrollStudent, getSchools } from "@/lib/store";
+import { GraduationCap, Key, User, Mail, Lock, AlertCircle, CheckCircle, ArrowLeft, School, BookOpen } from "lucide-react";
 
 export default function JoinPage() {
   const router = useRouter();
@@ -89,92 +91,358 @@ export default function JoinPage() {
 
   if (success) {
     return (
-      <div className="glass-card p-8 text-center">
-        <div className="rounded-full bg-green-100 p-3 w-12 h-12 mx-auto flex items-center justify-center">
-          <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md mx-auto"
+      >
+        <div className="glass-card p-10 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-400/5 to-purple-500/5" />
+          <div className="relative z-10">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+              className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center"
+            >
+              <CheckCircle className="w-8 h-8 text-white" />
+            </motion.div>
+            <motion.h2
+              className="text-2xl font-bold text-[#f8f4ff] mb-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              Welcome to the Class!
+            </motion.h2>
+            <motion.p
+              className="text-[#9d8ab5] mb-8"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              You&apos;re now enrolled and logged in.
+            </motion.p>
+            <motion.a
+              href="/student"
+              className="inline-flex items-center gap-2 px-8 py-3 btn-gold rounded-xl text-sm font-semibold shadow-lg shadow-gold-500/20"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              Go to Dashboard
+            </motion.a>
+          </div>
         </div>
-        <h2 className="mt-4 text-lg font-semibold text-[#f8f4ff]">Welcome to the class!</h2>
-        <p className="mt-2 text-sm text-[#9d8ab5]">You&apos;re now enrolled and logged in.</p>
-        <div className="mt-6">
-          <a href="/student" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-gold">Go to Dashboard</a>
-        </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="glass-card p-8">
-      {step === "code" ? (
-        <form className="space-y-6" onSubmit={handleVerifyCode}>
-          <div>
-            <label htmlFor="classCode" className="block text-sm font-medium text-[#cbd5e1]">Enter Class Code</label>
-            <input id="classCode" name="classCode" type="text" required value={classCode}
-              onChange={(e) => setClassCode(e.target.value.toUpperCase())}
-              placeholder="e.g., ABC123"
-              className="appearance-none block w-full px-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-center text-lg tracking-widest font-mono" />
-          </div>
-          {error && <div className="text-red-600 text-sm bg-red-500/100/100/100/100/100/100/10 p-3 rounded-md">{error}</div>}
-          <div>
-            <button type="submit" disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50 disabled:cursor-not-allowed">
-              {loading ? "Verifying..." : "Verify Code"}
-            </button>
-          </div>
-        </form>
-      ) : (
-        <>
-          {classInfo && (
-            <div className="mb-6 p-4 bg-green-500/100/100/100/100/100/100/10 border border-green-200 rounded-md">
-              <p className="text-sm text-green-800"><span className="font-medium">Class found!</span></p>
-              <p className="text-sm text-green-700 mt-1">{classInfo.school_name} - {classInfo.class_name}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="w-full max-w-md mx-auto"
+    >
+      <div className="glass-card p-8 md:p-10 relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gold-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10">
+          <motion.div
+            className="flex items-center justify-center gap-2 mb-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="relative">
+              <GraduationCap className="w-8 h-8 text-gold-400" />
+              <div className="absolute -inset-1 bg-gold-400/20 rounded-full blur-md" />
             </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-gold-400 to-amber-300 bg-clip-text text-transparent">
+              TeacherOS
+            </span>
+          </motion.div>
+
+          {step === "code" ? (
+            <>
+              <motion.h2
+                className="text-2xl font-bold text-[#f8f4ff] text-center mb-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Join a Class
+              </motion.h2>
+              <motion.p
+                className="text-[#7b6b8d] text-center text-sm mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                Enter the code your teacher shared
+              </motion.p>
+
+              <form className="space-y-5" onSubmit={handleVerifyCode}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.35 }}
+                >
+                  <div className="relative group">
+                    <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d] group-focus-within:text-gold-400 transition-colors" />
+                    <input
+                      id="classCode"
+                      name="classCode"
+                      type="text"
+                      required
+                      value={classCode}
+                      onChange={(e) => setClassCode(e.target.value.toUpperCase())}
+                      placeholder="e.g., ABC123"
+                      maxLength={10}
+                      className="w-full pl-10 pr-3 py-3 bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.12)] rounded-xl text-sm text-[#f8f4ff] placeholder-[#6b5b7d] focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all text-center text-lg tracking-[0.3em] font-mono"
+                    />
+                  </div>
+                </motion.div>
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 p-3 rounded-xl"
+                  >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
+                  </motion.div>
+                )}
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="group relative w-full py-3 btn-gold rounded-xl text-sm font-semibold transition-all shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                  >
+                    <span className="relative z-10">
+                      {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <motion.span
+                            className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          />
+                          Verifying...
+                        </span>
+                      ) : (
+                        "Verify Code"
+                      )}
+                    </span>
+                  </button>
+                </motion.div>
+              </form>
+            </>
+          ) : (
+            <>
+              {classInfo && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="mb-6 p-4 bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.2)] rounded-xl"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center">
+                      <School className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-emerald-400">Class found!</p>
+                      <p className="text-xs text-emerald-400/70 mt-0.5">{classInfo.school_name} — {classInfo.class_name}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <motion.h2
+                className="text-2xl font-bold text-[#f8f4ff] text-center mb-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Create Your Account
+              </motion.h2>
+              <motion.p
+                className="text-[#7b6b8d] text-center text-sm mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                Set up your student profile
+              </motion.p>
+
+              <form className="space-y-5" onSubmit={handleRegister}>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.25 }}
+                >
+                  <div className="relative group">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d] group-focus-within:text-gold-400 transition-colors" />
+                    <input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      autoComplete="name"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Full Name"
+                      className="w-full pl-10 pr-3 py-3 bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.12)] rounded-xl text-sm text-[#f8f4ff] placeholder-[#6b5b7d] focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d] group-focus-within:text-gold-400 transition-colors" />
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email address"
+                      className="w-full pl-10 pr-3 py-3 bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.12)] rounded-xl text-sm text-[#f8f4ff] placeholder-[#6b5b7d] focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.35 }}
+                >
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d] group-focus-within:text-gold-400 transition-colors" />
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      className="w-full pl-10 pr-3 py-3 bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.12)] rounded-xl text-sm text-[#f8f4ff] placeholder-[#6b5b7d] focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b5b7d] group-focus-within:text-gold-400 transition-colors" />
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm Password"
+                      className="w-full pl-10 pr-3 py-3 bg-[rgba(255,255,255,0.03)] border border-[rgba(212,175,55,0.12)] rounded-xl text-sm text-[#f8f4ff] placeholder-[#6b5b7d] focus:outline-none focus:border-gold-400/40 focus:ring-1 focus:ring-gold-400/20 transition-all"
+                    />
+                  </div>
+                </motion.div>
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 p-3 rounded-xl"
+                  >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
+                  </motion.div>
+                )}
+
+                <motion.div
+                  className="flex gap-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.45 }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => { setStep("code"); setClassInfo(null); setError(null); }}
+                    className="flex-1 py-3 px-4 border border-[rgba(212,175,55,0.12)] rounded-xl text-sm font-medium text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)] hover:border-gold-400/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 py-3 px-4 btn-gold rounded-xl text-sm font-semibold transition-all shadow-lg shadow-gold-500/20 hover:shadow-gold-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <motion.span
+                          className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        Creating account...
+                      </span>
+                    ) : (
+                      "Join Class"
+                    )}
+                  </button>
+                </motion.div>
+              </form>
+            </>
           )}
-          <form className="space-y-6" onSubmit={handleRegister}>
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-[#cbd5e1]">Full Name</label>
-              <input id="fullName" name="fullName" type="text" autoComplete="name" required value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm" />
+
+          <motion.div
+            className="mt-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[rgba(212,175,55,0.08)]" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-3 bg-surface-card text-[#6b5b7d]">
+                  Already have an account?
+                </span>
+              </div>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#cbd5e1]">Email address</label>
-              <input id="email" name="email" type="email" autoComplete="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm" />
+            <div className="mt-6">
+              <Link
+                href="/login"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 border border-[rgba(212,175,55,0.12)] rounded-xl text-sm font-medium text-[#cbd5e1] hover:bg-[rgba(212,175,55,0.05)] hover:border-gold-400/20 transition-all"
+              >
+                Sign in to existing account
+              </Link>
             </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#cbd5e1]">Password</label>
-              <input id="password" name="password" type="password" autoComplete="new-password" required value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm" />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#cbd5e1]">Confirm Password</label>
-              <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm" />
-            </div>
-            {error && <div className="text-red-600 text-sm bg-red-500/100/100/100/100/100/100/10 p-3 rounded-md">{error}</div>}
-            <div className="flex gap-3">
-              <button type="button" onClick={() => { setStep("code"); setClassInfo(null); setError(null); }}
-                className="flex-1 py-2 px-4 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm text-sm font-medium text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]">Back</button>
-              <button type="submit" disabled={loading}
-                className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                {loading ? "Creating account..." : "Join Class"}
-              </button>
-            </div>
-          </form>
-        </>
-      )}
-      <div className="mt-6">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[rgba(212,175,55,0.1)]" /></div>
-          <div className="relative flex justify-center text-sm"><span className="px-2 bg-surface-card/80 backdrop-blur-xl text-[#7b6b8d]">Already have an account?</span></div>
-        </div>
-        <div className="mt-6">
-          <Link href="/login" className="w-full flex justify-center py-2 px-4 border border-[rgba(212,175,55,0.15)] rounded-md shadow-sm text-sm font-medium text-[#cbd5e1] bg-surface-card/80 backdrop-blur-xl hover:bg-[rgba(212,175,55,0.05)]">Sign in to existing account</Link>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
