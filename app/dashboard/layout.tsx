@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useLayoutEffect, useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -77,19 +77,28 @@ export default function DashboardLayout({
   const allLinks = [
     ...navItems,
     { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
-  ] as const;
+  ];
 
   const navRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [gliderStyle, setGliderStyle] = useState({ top: 0, height: 0 });
+  const [gliderStyle, setGliderStyle] = useState({ top: 0, height: 40 });
 
-  useEffect(() => {
+  const updateGlider = useCallback(() => {
     const idx = allLinks.findIndex((item) => isActive(item.href));
     if (idx >= 0 && linkRefs.current[idx]) {
       const el = linkRefs.current[idx]!;
       setGliderStyle({ top: el.offsetTop, height: el.offsetHeight });
     }
   }, [pathname]);
+
+  useLayoutEffect(() => {
+    updateGlider();
+  }, [updateGlider]);
+
+  useEffect(() => {
+    window.addEventListener("resize", updateGlider);
+    return () => window.removeEventListener("resize", updateGlider);
+  }, [updateGlider]);
 
   return (
     <div className="min-h-screen bg-[#0a0015]">
@@ -140,7 +149,7 @@ export default function DashboardLayout({
               {/* Gliding indicator */}
               <motion.div
                 className="absolute left-0 w-full"
-                animate={{ top: gliderStyle.top, height: gliderStyle.height || 40 }}
+                animate={{ top: gliderStyle.top, height: gliderStyle.height }}
                 transition={{
                   type: "spring",
                   stiffness: 200,
