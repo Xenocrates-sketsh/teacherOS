@@ -126,9 +126,11 @@ export default function DashboardLayout({
               >
                 {isActive(item.href) && (
                   <motion.div
-                    layoutId="activeNav"
+                    initial={{ opacity: 0, scaleY: 0 }}
+                    animate={{ opacity: 1, scaleY: 1 }}
+                    exit={{ opacity: 0, scaleY: 0 }}
+                    transition={{ duration: 0.2 }}
                     className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-gold-400 rounded-full"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
                 <item.icon className="w-5 h-5" />
