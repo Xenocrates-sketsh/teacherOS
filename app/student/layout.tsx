@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { getSession, logoutUser } from "@/lib/auth";
 import {
@@ -24,17 +24,16 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const session = getSession();
-
     if (!session || session.role !== "student") {
       router.push("/login");
       return;
     }
-
     setUser(session);
     setLoading(false);
   }, [router]);
@@ -52,17 +51,19 @@ export default function StudentLayout({
     );
   }
 
-  const navItems = [
+  const isActive = (path: string) =>
+    pathname === path || pathname.startsWith(path + "/");
+
+  const bottomNav = [
     { icon: Home, label: "Home", href: "/student" },
-    { icon: Plus, label: "Join", href: "/student/join" },
     { icon: ClipboardCheck, label: "Attendance", href: "/student/attendance" },
+    { icon: Plus, label: "Join", href: "/student/join" },
     { icon: MessageSquare, label: "Chat", href: "/student/messages" },
     { icon: Calendar, label: "Calendar", href: "/student/calendar" },
-    { icon: CreditCard, label: "Card", href: "/student/card" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
@@ -70,21 +71,7 @@ export default function StudentLayout({
               <GraduationCap className="w-6 h-6 text-primary-600" />
               <span className="text-lg font-bold text-gray-900">TW</span>
             </Link>
-
-            <div className="flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex flex-col items-center gap-0.5 px-3 py-1 text-xs text-gray-500 hover:text-primary-600 transition-colors rounded-lg"
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <DarkModeToggle />
               <NotificationBell />
               <Link
@@ -110,6 +97,25 @@ export default function StudentLayout({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
+
+      <div className="fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 md:hidden">
+        <div className="flex items-center justify-around h-16">
+          {bottomNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors ${
+                isActive(item.href)
+                  ? "text-primary-600"
+                  : "text-gray-500 hover:text-primary-600"
+              }`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
