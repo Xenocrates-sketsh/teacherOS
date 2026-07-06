@@ -93,7 +93,7 @@ export default function DashboardLayout({
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full overflow-hidden">
           <div className="flex items-center justify-between h-16 px-4 border-b border-[rgba(212,175,55,0.08)]">
             <Link href="/dashboard" className="flex items-center gap-2.5 group">
               <div className="relative">
@@ -112,7 +112,7 @@ export default function DashboardLayout({
             </button>
           </div>
 
-          <nav className="flex-1 px-3 py-4 space-y-1">
+          <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
